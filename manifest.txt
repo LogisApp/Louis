@@ -1,0 +1,14 @@
+'This code will be applied to the manifest file during compilation.
+'You do not need to modify it in most cases.
+'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136
+'<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="29"/>
+AddManifestText(
+<uses-sdk android:minSdkVersion="8"/>
+<supports-screens android:largeScreens="true" 
+    android:normalScreens="true" 
+    android:smallScreens="true" 
+    android:anyDensity="true"/>)
+SetApplicationAttribute(android:icon, "@drawable/icon")
+SetApplicationAttribute(android:label, "$LABEL$")
+'SetApplicationAttribute(android:theme, "@android:style/Theme.Holo.Light")
+'End of default text.
