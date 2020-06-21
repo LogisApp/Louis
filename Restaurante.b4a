@@ -1,0 +1,2131 @@
+﻿Build1=Default,b4a.restaurante
+File1=admin.bal
+File10=COLACTEOS.db
+File11=compra_inv.bal
+File12=DBUtils.b4a
+File13=DBUtils.bas
+File14=Dialogs.jar
+File15=informes.bal
+File16=kalender.bal
+File17=KalenderActivity.bas
+File18=pagos.bal
+File19=pedidos.bal
+File2=admon.bal
+File20=principal.bal
+File21=producto.png
+File22=productos2.bal
+File23=save1.png
+File24=setup.bal
+File25=shoping_precios.bal
+File3=balance.bal
+File4=borrar.png
+File5=borrar2.png
+File6=buscar2.png
+File7=carta.bal
+File8=cliente.png
+File9=clientes.bal
+FileGroup1=Default Group
+FileGroup10=Default Group
+FileGroup11=Default Group
+FileGroup12=Default Group
+FileGroup13=Default Group
+FileGroup14=Default Group
+FileGroup15=Default Group
+FileGroup16=Default Group
+FileGroup17=Default Group
+FileGroup18=Default Group
+FileGroup19=Default Group
+FileGroup2=Default Group
+FileGroup20=Default Group
+FileGroup21=Default Group
+FileGroup22=Default Group
+FileGroup23=Default Group
+FileGroup24=Default Group
+FileGroup25=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
+FileGroup8=Default Group
+FileGroup9=Default Group
+Group=Default Group
+Library1=core
+Library10=phone
+Library11=net
+Library12=abzipunzip
+Library13=audio
+Library14=clsexplorer
+Library2=sql
+Library3=httputils2
+Library4=accessibility
+Library5=dialogs
+Library6=stringfunctions
+Library7=togglelibrary
+Library8=serial
+Library9=tabbar
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="28"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
+Module1=DBUtils
+Module2=|relative|..\inventario
+Module3=KalenderActivity
+NumberOfFiles=25
+NumberOfLibraries=14
+NumberOfModules=3
+Version=9.85
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: TaT-LogisApp
+'	#ApplicationLabel: Factura-Pos
+	#VersionCode: 1
+	#VersionName: 
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: True
+	#BridgeLogger: True
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: True
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+	Dim s As SQL
+	Dim Buffer() As Byte 'declares an empty array
+
+	Dim PrintBuffer As String
+	Dim btAdmin As BluetoothAdmin
+	Dim cmp20 As Serial
+	Dim printer As TextWriter
+	Dim tam As Int
+	Dim Awake As PhoneWakeState
+End Sub
+
+Sub Globals
+	Dim Panel1,Panel2,Panel3,Panel4,Panel5,Panel6,Panel7,Panel8,Panel9,Panel10 As Panel
+	Dim Toggla As Toggle
+	Dim pedido As Int
+	Dim cliente As Int
+	Dim compra As Int
+	Dim alto1,alto2 As Int ' Alto listado, alto linea
+	'These global variables will be redeclared each time the activity is created.
+	'These variables can only be accessed from this module.
+'''   	Private fx As JFX
+'''   	Private MainForm As Form
+'''   	Private TreeView1 As TreeView
+   	Dim Img1 As ImageView
+    Dim sf As StringFunctions
+'    sf.Initialize	
+	Dim tit As String      : tit = "Cazuelitas & Frijoles"
+	Dim stit As String     :stit = "Restaurante"
+	Dim dir As String      : dir = "Calle 16 # 13-40"
+	Dim rut As String      : rut = "12998441-1"
+	Dim tel As String      : tel = "3504616892"
+	Dim mail As String     : mail = "louisbas@gmail.com"
+	Dim restaurante As Int : restaurante=0
+	'- 0 distriuidor
+	'- 1 cazuelitas
+	'- 2 amway
+	Dim mensaje As String
+	Dim c As Cursor
+	Private btn As Button
+	Private txt_nombre As EditText
+	Private txt_celular As EditText
+	Private txt_direccion As EditText
+'	Dim linea As String 
+	Dim txt_ynombre As String  
+	Private btn_delete As Button
+	Dim tam_texto As Int 
+	Dim TabHost1 As TabHost
+	Dim TabBar1 As TabBar
+	Private txt_mail As EditText
+	Private txt_descripcion As EditText
+	Private txt_precio As EditText
+	Private txt_costo As EditText
+	Private btn_pro_add As Button
+	Private btn_pro_del As Button
+	Type reg_ter (NIT As String ,NOMBRE As String,DIRECCION As String, CELULAR As String, mail As String, FECHA_REG As String, IMAGEN() As Byte , FRECUENCIA As Int, ID_TERCERO  As Int)
+	Dim terceros(1000) As reg_ter
+	Type reg_pla (DESCRIPCION As String, GRUPO As Int, PRECIO As Int , COSTO As Int, IMAGEN() As Byte, ID_PLATO As Int)
+	Dim platos (1000) As reg_pla
+	Dim carta (1000) As reg_pla
+	Type reg_fac (ID_FACTURA As Int,ID_TIPO As Int ,fecha As String ,ID_TERCERO As Int,ID_MESERO As Int ,VR_TOTAL As Int,VR_PAGADO As Int,NOTAS As String)
+	Dim facturas (1000) As reg_fac
+	Type reg_mov (ID_MOVIMIENTO As Int,ID_TIPO As Int ,ID_TERCERO As Int,DESCRIPCION As String ,fecha As String, VALOR As Int)
+	Dim movimientos (1000) As reg_mov
+	Type reg_fac_lin (ID_FACTURA As Int,ID_PLATO As Int ,CANTIDAD As Int,PRECIO As Int ,COSTO As Int, ID_FACTURA_LIN As Int)
+	Dim compras (1000) As reg_fac_lin
+	Private foto As ImageView
+	Private txt_grupo As EditText
+	Private foto_carta As ImageView
+	Dim fecha As String
+	Private lv_carta As ListView
+	Private lv_ter As ListView
+	Private lv_pro As ListView
+	Private lv_pedidos As ListView
+	Private lv_pedidos_det As ListView
+	Private lv_balance As ListView
+	Private lv_movimiento As ListView
+	Private lv_compra As ListView
+	Private lv_balance_det As ListView
+	Private lv_shoping As ListView
+	Private chk_carta As CheckBox
+	Private lbl_carta As Label
+	Dim i,j As Int 
+	Dim tot_fac As Int
+	Dim tot_dia As Int
+	Private txt_detalle_mov As EditText
+	Private txt_valor_mov As EditText
+	Private btn_mov As Button
+	Private btn_delete_mov As Button
+	Private btn_debito As RadioButton
+	Private btn_credito As RadioButton
+	Private spn_ter_mov As Spinner
+	Private spn_carta As Spinner
+	Private spn_ter_cxc As Spinner
+	Private btn_compra As Button
+	Private txt_des_pro As EditText
+	Private txt_can_pro As EditText
+	Private btn_del_compra As Button
+'-
+	Dim SMTP1 As SMTP
+	Dim server As String      		: server= "smtp.gmail.com"
+	Dim port As Int           		: port= 465
+	Dim emailname As String   		: emailname="facturaapplouis@gmail.com"
+	Dim password As String    		: password="Col123456*"
+	Dim protocol As String    		: protocol="SMTP"
+	Dim destEmailAdress As String 	: 
+'-
+	Dim myZip As ABZipUnzip
+	Dim db As String : db="FACTURAPOS.db"
+	Type color(A As Int, R As Int, B As Int, G As Int)
+   Type Theme(Name As String, B As color, PB As color,  FC As color, SFC As color,PBH As color,mbg As color)
+   Dim Themes As List
+   Themes.Initialize
+   Dim CurrentTheme As Int
+
+   Dim TD As Theme
+   TD.Initialize
+   TD.Name = "Dark"
+   TD.B.A = 255
+   TD.B.R = 28
+   TD.B.B = 28
+   TD.B.G = 28
+   TD.PB.A = 255
+   TD.PB.R = 56
+   TD.PB.G = 56
+   TD.PB.B = 56
+   TD.FC.A = 215
+   TD.FC.R = 104
+   TD.FC.G = 213
+   TD.FC.B = 214
+   TD.SFC.A = 255
+   TD.SFC.R = 150
+   TD.SFC.g = 20
+   TD.SFC.b = 5
+   TD.PBH.a = 255
+   TD.PBH.R = 87
+   TD.PBH.g = 87
+   TD.PBH.b = 87
+   TD.mbg.A = 255
+   TD.mbg.R = 44
+   TD.mbg.g = 44
+   TD.mbg.b = 44
+   
+   Themes.Add(TD)
+   
+   Dim TN As Theme
+   TN.Initialize
+   TN.Name = "Night"
+   TN.B.A = 255
+   TN.B.R = 27
+   TN.B.B = 38
+   TN.B.G = 39
+   TN.PB.A = 255
+   TN.PB.R = 71
+   TN.PB.G = 34
+   TN.PB.B = 69
+   TN.FC.A = 255
+   TN.FC.R = 216
+   TN.FC.G = 123
+   TN.FC.B = 255
+   TN.SFC.A = 255
+   TN.SFC.R = 150
+   TN.SFC.g = 20
+   TN.SFC.b = 5
+   TN.PBH.A = 255
+   TN.PBH.R = 0
+   TN.PBH.g = 0
+   TN.PBH.b = 0
+   TN.mbg.A = 255
+   TN.mbg.R = 72
+   TN.mbg.g = 35
+   TN.mbg.b = 52
+   
+   Themes.Add(TN)
+   
+   CurrentTheme = Themes.IndexOf(TD)
+	Private txtfecha As EditText
+	Private lblfecha As Label
+	Private lv_informes As ListView
+	Private spn_fecha As Spinner
+	Private spn_prod As Spinner
+	Private chkfactura As CheckBox
+	Private txt_bar_pro As EditText
+	Private txt_nom_pro As EditText
+	Private txt_pre_pro As EditText
+	Private btn_add_pro As Button
+	Private btn_del_pro As Button
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	DateTime.DateFormat ="MM-dd-yyyy"
+	If FirstTime Then
+		Dim c As Cursor
+		Dim s As SQL
+		If File.Exists(File.DirInternal,"autopos.conf")=False Then
+			ToastMessageShow("Configurar APP" ,True)
+			If s.IsInitialized = False Then
+				s.Initialize(File.DirInternal,"autopos.conf",True)
+			End If
+			s.ExecNonQuery("drop table if exists USERS")
+			s.ExecNonQuery("CREATE TABLE USERS ([NIT] varchar(15),[NOMBRE] varchar(30),[PERFIL] int (1), [FINICIO] varchar(10))")
+		End If
+		s.Initialize(File.DirInternal,"autopos.conf",True)
+'---		s.ExecNonQuery("drop table if exists USERS")
+'---		s.ExecNonQuery("CREATE TABLE USERS ([NIT] varchar(15),[NOMBRE] varchar(30),[PERFIL] int (1), [FINICIO] varchar(10))")
+		c=s.ExecQuery("select * from  USERS")
+		If c.RowCount=0 Then
+			Dim unit,unom,modu,ufec,producto As String
+			Dim uper As Int
+			s.ExecNonQuery("DELETE FROM USERS")
+			unit = InputBox("","Nit Usuario","","Identificacion")
+			unom = sf.Upper(InputBox("","Nombre","","Nombres"))
+			uper = InputBox("","Perfil Usuario","","1,2")
+			ufec=DateTime.Date(DateTime.Now)
+			producto=InputBox("","Codigo","","Codigo de Activacion")
+			If unit<>"" Then
+				s.ExecNonQuery2("INSERT INTO USERS values (?,?,?,?)",Array As Object (unit,unom,uper,ufec))
+			End If
+		'modulo=1234
+		' 3164
+		' SI
+		' modu=1+2+3+4 = 10 la suma es menor o igual a 10 es error
+		' 4-1 = 3  si la diferencia del ultimo con el primero es diferente de 1 es error
+		' modu=3-2 = 1
+		' si modu<0 or >6 error
+		' la resta de 3-2 da el modulo a activar si
+		' si es 1 activa Agros
+		' si es 2 activa Almacen
+		' si es 3 activa Asistencia Tecnica saldos agros
+		' si es 4 Activa saldos para laboratorios
+		' si es 5 activa saldos Cuarto Frio Plantas
+		' si es 6 activa saldos Puntos de venta
+		'----
+			modu=sf.Val(sf.Mid(producto,1,1))+sf.Val(sf.Mid(producto,2,1))+sf.Val(sf.Mid(producto,3,1))+sf.Val(sf.Mid(producto,4,1))
+			If modu<=10 Or (sf.Val(sf.Mid(producto,4,1))-sf.Val(sf.Mid(producto,1,1)))<>1 Then
+				MsgboxAsync("Codigo de Activacion Errado 1","Error")
+				Activity_KeyPress(4)
+			End If
+			modu=sf.Val(sf.Mid(producto,3,1))-sf.Val(sf.Mid(producto,2,1))
+			If modu<0 Or modu>7 Then
+				MsgboxAsync("Codigo de Activacion Errado 2","Error")
+				Activity_KeyPress(4)
+			End If
+		Else
+			c.Position=0
+			Dim dias As Int
+			dias=sf.NumOfDaysBetween(DateTime.Date(DateTime.Now),c.Getstring("FINICIO"))
+			If dias>30 Then
+				Activity_KeyPress(4)
+			End If
+			MsgboxAsync ("Trial","Louix-" & dias)
+		End If
+	End If
+	If restaurante=0 Then
+		tit=sf.Upper("Fernando Chavez")
+		stit=sf.Upper("Auto Venta")
+		dir="Sumatambo"
+		rut="98398987-9"
+		tel="3136584682"
+		mail="inversioneschaves@gmail.com"
+	End If
+	If restaurante=2 Then
+		tit=sf.Upper("Amway Salas-Barrero")
+		stit=sf.Upper("Agente Comercial")
+		dir=""
+		rut=""
+		tel="3148704248"
+'		mail="mbarrerom@gmail.com"
+	End If
+	spn_ter_mov.Initialize("spinner1")
+	spn_carta.Initialize("spinner2")
+	spn_ter_cxc.Initialize("spinner3")
+'-----------	codigo
+	If FirstTime Then
+		'-Awake.KeepAlive(True) 'la pantalla nunca se para
+'##		Awake.KeepAlive(False) 'la pantalla no se para, pero brilla menos
+		'-Awake.ReleaseKeepAlive 'deja que la pantalla se pueda parar
+'##		btAdmin.Initialize("BlueTeeth")
+'##		cmp20.Initialize("Printer")
+		ToastMessageShow("Iniciando Impresora",True)
+		tam=GetDeviceLayoutValues.ApproximateScreenSize
+		If tam>=4 Then
+			alto1=160
+			alto2=0.65
+		Else
+			alto1=80
+			alto2=8.59
+		End If
+		Dim n As Notification
+		n.Initialize
+		n.Icon = "icon"
+		n.SetInfo(Application.LabelName, "Version 2.5", "") 
+'##		n.Light = True
+'---		n.Sound = False
+'---		n.Vibrate = False
+		'Change Main to "" if this code is in the main module.
+'---		n.Notify(1)
+	End If
+	'Do not forget to load the layout file created with the visual designer. For example:
+'	Activity.LoadLayout("principal")
+'	Activity.AddMenuItem("Clientes","actualiza_ter")
+'	Activity.AddMenuItem("Productos","actualiza_prod")
+'	Activity.OpenMenu
+	'DateTime.SetTimeZone(0)
+
+	'Dim dt_now As String
+	fecha= DateTime.Date(DateTime.Now)
+	Activity.Title="Tiquete Pos :" & tit & " - " & fecha
+
+	Dim cli_,men_,ped_,pag_,bal_,inv_,pro_,set_,inf_,bar_ As BitmapDrawable
+	cli_.Initialize(LoadBitmapSample(File.DirAssets, "cliente.png", 10dip, 10dip))
+	men_.Initialize(LoadBitmapSample(File.DirAssets, "menu.png", 10dip, 10dip))
+	ped_.Initialize(LoadBitmapSample(File.DirAssets, "pedido.png", 10dip, 10dip))
+	pag_.Initialize(LoadBitmapSample(File.DirAssets, "pagos.png", 10dip, 10dip))
+	bal_.Initialize(LoadBitmapSample(File.DirAssets, "balance.png", 10dip, 10dip))
+	inv_.Initialize(LoadBitmapSample(File.DirAssets, "inventario.png", 10dip, 10dip))
+	pro_.Initialize(LoadBitmapSample(File.DirAssets, "producto.png", 10dip, 10dip))
+	If restaurante=1 Then
+		set_.Initialize(LoadBitmapSample(File.DirAssets, "setup.png", 10dip, 10dip))
+		inf_.Initialize(LoadBitmapSample(File.DirAssets, "informe.png", 10dip, 10dip))
+		bar_.Initialize(LoadBitmapSample(File.DirAssets, "shoping.png", 10dip, 10dip))
+	End If
+	TabBar1.Initialize("TabBar1")                                 '
+	TabBar1.AddTab("Clientes", 12, Null, Null, cli_, Null, 1)     '1
+	If restaurante=1 Then
+		TabBar1.AddTab("Menu", 12, Null, Null, men_, Null, 1)     '2
+	Else
+		TabBar1.AddTab("Catlgo", 12, Null, Null, men_, Null, 1)      '2	
+	End If
+	TabBar1.AddTab("Pedidos", 12, Null, Null, ped_, Null, 1)      '3
+	TabBar1.AddTab("Pagos", 12, Null, Null, pag_, Null, 1)        '4
+	TabBar1.AddTab("Balance", 12, Null, Null, bal_, Null, 1)      '5
+	TabBar1.AddTab("Inventario", 12, Null, Null, inv_, Null, 1)   '6
+	TabBar1.AddTab("Productos", 12, Null, Null, pro_, Null, 1)    '7
+	If restaurante=1 Then
+		TabBar1.AddTab("Setup", 12, Null, Null, set_, Null, 1)    '8
+		TabBar1.AddTab("Informes", 12, Null, Null, inf_, Null, 1) '9
+		TabBar1.AddTab("Shoping", 12, Null, Null, inf_, Null, 1)  '10
+	End If
+	TabBar1.SetCurrentTab(1,True)
+	If tam>=4 Then
+		Activity.AddView(TabBar1, 0, -70, Activity.Width, Activity.Height / 7)
+	Else
+		Activity.AddView(TabBar1, 0, -20, Activity.Width, Activity.Height / 7)
+	End If
+	Panel1.Initialize("Panel1")
+	Panel2.Initialize("Panel2")
+	Panel3.Initialize("Panel3")
+	Panel4.Initialize("Panel4")
+	Panel5.Initialize("Panel5")
+	Panel6.Initialize("Panel6")
+	Panel7.Initialize("Panel7")
+	If restaurante=1 Then
+		Panel8.Initialize("Panel8")
+		Panel9.Initialize("Panel9")
+		Panel10.Initialize("Panel10")
+	End If
+'	Panel1.color= TabBar1.GetFolderTabPanelColor
+	Activity.AddView(Panel1, 0, 0, Activity.Width, Activity.Height)
+	Panel1.Top=70dip
+	Panel1.Left=0dip
+	Panel1.Visible=True
+	Activity.AddView(Panel2, 0, 0, Activity.Width, Activity.Height)
+	Panel2.Top=70dip
+	Panel2.Left=0dip
+	Panel2.Visible=False
+	Activity.AddView(Panel3, 0, 0, Activity.Width, Activity.Height)
+	Panel3.Top=70dip
+	Panel3.Left=0dip
+	Panel3.Visible=False
+	Activity.AddView(Panel4, 0, 0, Activity.Width, Activity.Height)
+	Panel4.Top=70dip
+	Panel4.Left=0dip
+	Panel4.Visible=False
+	Activity.AddView(Panel5, 0, 0, Activity.Width, Activity.Height)
+	Panel5.Top=70dip
+	Panel5.Left=0dip
+	Panel5.Visible=False
+	Activity.AddView(Panel6, 0, 0, Activity.Width, Activity.Height)
+	Panel6.Top=70dip
+	Panel6.Left=0dip
+	Panel6.Visible=False
+	Activity.AddView(Panel7, 0, 0, Activity.Width, Activity.Height)
+	Panel7.Top=70dip
+	Panel7.Left=0dip
+	Panel7.Visible=False
+	If restaurante=1 Then
+		Activity.AddView(Panel8, 0, 0, Activity.Width, Activity.Height)
+		Panel8.Top=70dip
+		Panel8.Left=0dip
+		Panel8.Visible=False
+		Activity.AddView(Panel9, 0, 0, Activity.Width, Activity.Height)
+		Panel9.Top=70dip
+		Panel9.Left=0dip
+		Panel9.Visible=False
+		Activity.AddView(Panel10, 0, 0, Activity.Width, Activity.Height)
+		Panel10.Top=70dip
+		Panel10.Left=0dip
+		Panel10.Visible=False
+	End If
+''	Panel1.LoadLayout("principal")
+'	Activity.LoadLayout("principal")
+'
+'	Dim TextWriter1 As TextWriter
+'   TextWriter1.Initialize(File.OpenOutput(File.DirRootExternal, "louis.txt", False))
+'    TextWriter1.Initialize(File.OpenOutput("/storage/extSdCard/Dms_data/", "louis.txt", False))
+'    For i = 1 To 10
+'       TextWriter1.WriteLine("Line - " & i & DateUtils.GetDaysNames)
+'    Next
+'    TextWriter1.Close
+'
+	Dim ruta As String 
+	If File.ExternalWritable Then
+'---		ruta=File.DirRootExternal 
+	Else
+		ruta=File.DirInternal
+	End If
+'	ToastMessageShow("Ruta: " & ruta ,True)
+	If File.Exists(ruta,db)=False Then
+		ToastMessageShow("Configurar APP" ,True)
+		s.Initialize(ruta,db,True)
+		s.ExecNonQuery("drop table if exists TERCEROS")
+		s.ExecNonQuery("CREATE TABLE TERCEROS ([NIT] TEXT, [NOMBRE] TEXT Not Null,[DIRECCION] TEXT, [CELULAR] TEXT, [MAIL] TEXT, [FECHA_REG] DATE, [IMAGEN] INTEGER,[ID_TERCERO] INTEGER PRIMARY KEY AUTOINCREMENT)")
+		s.ExecNonQuery("drop table if exists PLATOS")
+		s.ExecNonQuery("CREATE TABLE PLATOS ([DESCRIPCION] TEXT, [GRUPO] NUMERIC, [PRECIO] NUMERIC, [COSTO] NUMERIC, [IMAGEN] BLOB,[ID_PLATO] INTEGER PRIMARY KEY AUTOINCREMENT)")
+		s.ExecNonQuery("drop table if exists RESERVAS")
+		s.ExecNonQuery("CREATE TABLE RESERVAS ([NOMBRE] TEXT Not Null,[FECHA_RES] TEXT,[PERSONAS] INTEGER,[FECHA_REG] TEXT )")
+		s.ExecNonQuery("drop table if exists MESEROS")
+		s.ExecNonQuery("CREATE TABLE MESEROS ([ID_TERCERO] INTEGER Not Null,[FECHA_INI] DATE Not Null,[FECHA_SAL] DATE )")
+		s.ExecNonQuery("drop table if exists FACTURAS")
+		s.ExecNonQuery("CREATE TABLE FACTURAS ([ID_FACTURA] INTEGER PRIMARY KEY AUTOINCREMENT,[ID_TIPO] TINYINT, [FECHA] DATE ,[ID_TERCERO] INTEGER,[ID_MESERO] INTEGER ,[VR_TOTAL] Decimal (10,2),[VR_PAGADO] Decimal (10,2),[NOTAS] VarChar(20))")
+		s.ExecNonQuery("drop table if exists FACTURAS_LIN")
+		s.ExecNonQuery("CREATE TABLE FACTURAS_LIN ([ID_FACTURA_LIN] INTEGER PRIMARY KEY AUTOINCREMENT,[ID_FACTURA] Integer Not Null, [ID_TIPO] TINYINT,[ID_PLATO] INTEGER Not Null,[CANTIDAD] Integer,[PRECIO] Decimal (8,2),[COSTO] Decimal (8,2),[NOTA] VarChar(5))")
+		s.ExecNonQuery("drop table if exists MOVIMIENTO")
+		s.ExecNonQuery("CREATE TABLE MOVIMIENTO ([ID_MOVIMIENTO] INTEGER PRIMARY KEY AUTOINCREMENT, [ID_TIPO] TINYINT, [ID_TERCERO] TEXT, [DESCRIPCION] VARCHAR, [FECHA] DATE, [VALOR] NUMBER(13, 2))")
+		s.ExecNonQuery("drop table if exists SHOPING")
+		s.ExecNonQuery("CREATE TABLE SHOPING ([ID_SHOPING] INTEGER PRIMARY KEY AUTOINCREMENT, [BARRAS] VARCHAR, [DESCRIPCION] VARCHAR, [PRECIO] NUMBER(13, 2), [FECHA] DATE)")
+	End If
+	If FirstTime Then
+		s.Initialize(ruta,db,True)
+	End If
+	c=s.ExecQuery("select * from FACTURAS where id_tipo=1 and fecha='" & fecha & "'")
+	If c.RowCount>0 Then
+		c.Position=0
+		compra=c.GetInt("ID_FACTURA")
+	Else
+		compra=-1
+	End If
+	tam_texto=18
+	
+	lv_ter.Initialize("lv_ter")
+	lv_pro.Initialize("lv_pro")
+	lv_carta.Initialize("lv_carta")
+	lv_pedidos.Initialize("lv_pedidos")
+	lv_pedidos_det.Initialize("lv_pedidos_det")
+	lv_balance.Initialize("lv_balance")
+	lv_balance_det.Initialize("lv_balance_det")
+	lv_movimiento.Initialize("lv_movimiento")
+	lv_compra.Initialize("lv_compra")
+	lv_shoping.Initialize("lv_shoping")
+
+	Panel1.LoadLayout("clientes")
+	Panel2.LoadLayout("carta")
+	Panel3.LoadLayout("pedidos")
+	Panel4.LoadLayout("pagos")
+	Panel5.LoadLayout("balance")
+	Panel6.LoadLayout("compra_inv")
+	Panel7.LoadLayout("productos2")
+	If restaurante=1 Then
+'--		Panel8.LoadLayout("kalender")
+		Panel9.LoadLayout("informes")
+		Panel10.LoadLayout("shoping_precios")
+	End If
+	spn_carta.AddAll(Array As Int(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,50,100))
+	If restaurante=2 Then
+		spn_carta.Prompt="Frecuencia"
+	Else
+		spn_carta.Prompt="Cantidad"
+	End If
+	spn_carta.SelectedIndex=1	
+	btn_compra.Initialize("btn_compra")
+	txt_des_pro.Initialize("txt_des_pro")
+	txt_can_pro.Initialize("txt_can_pro")
+	lbl_carta.Initialize("lbl_carta")
+
+	actualiza_compra
+	actualiza_pagos
+	actualiza_balance
+	actualiza_pedidos
+	actualiza_carta
+	actualiza_prod
+	actualiza_ter
+End Sub
+
+Sub TabBar1_TabClicked(SelectedTab As Int, SelectionChanged As Boolean)
+'	ToastMessageShow("Selected Tab= " & SelectedTab & ", Selection Changed= " & SelectionChanged, False)
+'	Panel1.RemoveAllViews 
+	Panel1.Visible=False
+	Panel2.Visible=False
+	Panel3.Visible=False
+	Panel4.Visible=False
+	Panel5.Visible=False
+	Panel6.Visible=False
+	Panel7.Visible=False
+	If restaurante=1 Then
+		Panel8.Visible=False
+		Panel9.Visible=False
+		Panel10.Visible=False
+	End If
+	TabBar1.SetTabState(0, True)
+	TabBar1.SetTabState(1, True)
+	TabBar1.SetTabState(2, True)
+	TabBar1.SetTabState(3, True)
+	TabBar1.SetTabState(4, True)
+	TabBar1.SetTabState(5, True)
+	TabBar1.SetTabState(6, True)
+	If restaurante=1 Then
+		TabBar1.SetTabState(7, True)
+		TabBar1.SetTabState(8, True)
+		TabBar1.SetTabState(10, True)
+	End If
+	TabBar1.SetTabState(SelectedTab, False)
+	Select SelectedTab
+		Case 0
+			Panel1.Visible=True
+'			TabBar1.SetTabState(0, False)
+		Case 1
+			Panel2.Visible=True
+'			TabBar1.SetTabState(1, False)
+		Case 2
+			Panel3.Visible=True
+'			TabBar1.SetTabState(2, False)
+		Case 3
+			Panel4.Visible=True
+'			TabBar1.SetTabState(3, False)
+		Case 4
+			Panel5.Visible=True
+'			TabBar1.SetTabState(4, False)
+		Case 5
+			Panel6.Visible=True
+'			TabBar1.SetTabState(5, False)
+		Case 6
+			Panel7.Visible=True
+'			TabBar1.SetTabState(6, False)
+		Case 7
+			Panel8.Visible=True
+'			TabBar1.SetTabState(7, True)
+'			DateTime.DateFormat = "MMddyyyy"
+'			KalenderActivity.DaySelected=DateTime.Now
+			DateTime.DateFormat = "MM-dd-yyyy"
+			StartActivity(KalenderActivity)
+'ToastMessageShow(DateTime.Date(KalenderActivity.DaySelected),True)
+'--			If KalenderActivity.DaySelected>0 Then
+				fecha = DateTime.Date(KalenderActivity.DaySelected)
+'ToastMessageShow(fecha,True)
+'--			End If
+			Panel1.Visible=True
+			TabBar1.SetTabState(0, False)
+			Activity.Title="Tiquete Pos :" & tit & " - " & fecha
+			TabBar1.SetCurrentTab(0,True)
+		Case 8
+			lv_informes.Clear 
+			c=s.ExecQuery("select fecha,max(id_factura) as NUMERO,substr(fecha,7,4) as ano,substr(fecha,1,2) as mes,substr(fecha,4,2) as dia from FACTURAS where id_tipo=5 group by fecha order by ano desc ,mes desc, dia desc")
+			If c.RowCount>0 Then
+				c.Position=0
+				spn_fecha.Clear 
+				spn_prod.Clear 
+				For i= 0 To c.RowCount - 1 
+					c.Position=i
+					spn_fecha.Add(c.GetString("FECHA") & " - " & c.GetInt("NUMERO"))
+					spn_prod.Add(c.GetString("FECHA") & " - " & c.GetInt("NUMERO"))
+				Next
+				spn_prod.Add("Mes")
+				spn_prod.Add("Año")
+			End If
+			Panel9.Visible=True
+			TabBar1.SetTabState(8, False)
+		Case 10
+			Panel10.Visible=True
+			TabBar1.SetTabState(10, False)
+	End Select
+End Sub
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		Dim ruta As String 
+		If File.ExternalWritable Then
+			ruta=File.DirRootExternal 
+		Else
+			ruta=File.DirInternal
+		End If
+		ruta=ruta & "/"
+		myZip.ABZipFile(ruta , db, ruta & db & ".zip")
+		If DateTime.GetMinute(DateTime.Now)<5 Then
+		' Enviar los primeros 5 min de cada hora
+			destEmailAdress=mail
+			SMTP1.Initialize(server, port, emailname, password, protocol)
+   			SMTP1.UseSSL = True
+   			SMTP1.To.Add (destEmailAdress)
+			Dim p As Phone
+   			SMTP1.Subject = Application.LabelName & " " & p.Manufacturer & " - " & p.Model  & " - " & fecha
+   			SMTP1.Body = "Copia de Seguridad"
+	  		SMTP1.AddAttachment(ruta, db & ".zip" )
+			SMTP1.Send
+			Dim Beeper1 As Beeper
+			Beeper1.Initialize(300, 500) '300 milliseconds, 500 hz
+			Beeper1.Beep
+		End If
+		Msgbox("Gracias - Louisbas@gmail.com-",Application.LabelName)
+		Activity.Finish
+		ExitApplication
+	Else
+		Return False
+	End If
+End Sub
+
+Sub Activity_Resume
+'-	btAdmin.Initialize("BlueTeeth")
+	cmp20.Initialize("Printer")
+	ToastMessageShow("Activando Bluethoo",True)
+'-	Notification.Cancel(1)
+	Dim n As Notification
+	n.Cancel (1)
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+	Awake.ReleaseKeepAlive 'deja que la pantalla se pueda parar
+	ToastMessageShow("Louis - Ver 2.5",True)
+	Dim Id As InputDialog
+	Dim ret As Int 
+    Id.Hint = "Desea Salir"
+    Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+    ret = Id.Show("", tit, "Salir", "Cancelar", "Pedidos",Null)
+    ' Primer botón -1
+    If ret <> -1 Then 
+		Activity.RequestFocus
+	End If
+End Sub
+
+Sub btn_Click
+	If txt_nombre.Text <> "" Then
+		If txt_nombre.Text = "BORRAR" Then
+			s.ExecNonQuery("delete from terceros ")
+		Else
+			If btn.Tag ="Agregar" Then
+				c=s.ExecQuery("select * from terceros where nombre='" & sf.upper (txt_nombre.Text) & "'")
+				If c.RowCount>0 Then
+					Msgbox("Ya Existe","Error")
+				Else
+					s.ExecNonQuery2("insert into terceros (rowid,NOMBRE,DIRECCION,CELULAR,MAIL,FECHA_REG) values (null,?,?,?,?,?)", Array As Object (sf.upper (txt_nombre.Text),sf.upper (txt_direccion.Text),txt_celular.Text,sf.upper (txt_mail.Text),fecha))
+				End If
+			Else
+'    Create Map of Scores
+    Dim NitFields As Map
+    NitFields.Initialize
+    NitFields.Put("NOMBRE",sf.Upper(txt_nombre.Text))
+    NitFields.Put("CELULAR",sf.Upper(txt_celular.Text))
+    NitFields.Put("DIRECCION",sf.Upper(txt_direccion.Text))
+    NitFields.Put("MAIL",sf.Upper(txt_mail.Text))
+  
+'    Create Where Clause Map
+    Dim WhereFields As Map
+    WhereFields.Initialize
+    WhereFields.Put("NOMBRE", txt_ynombre) 
+    DBUtils.UpdateRecord2(s, "TERCEROS", NitFields, WhereFields)
+'	ToastMessageShow(txt_ynombre,True)
+'				s.ExecQuery2("update terceros set NOMBRE=? ,CELULAR=? ,DIRECCION=? where NOMBRE=" & txt_ynombre, Array As Object (txt_nombre.Text, txt_celular.Text, txt_direccion.Text)) 
+			End If
+		End If
+		actualiza_ter
+	End If
+	txt_nombre.RequestFocus
+	btn_delete.Tag="Buscar"
+	btn_delete.SetBackgroundImage(LoadBitmap(File.DirAssets,"buscar2.png"))
+End Sub
+
+Sub btn_delete_Click
+	Dim Id As InputDialog
+	Dim ret As Int 
+	If btn_delete.Tag="Borrar" Then
+	    Id.Hint = txt_nombre.Text 
+	    Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+
+    	ret = Id.Show("", tit, "Borrar", "Cancelar", "",Null)
+    
+    	' Primer botón -1
+    	If ret = -1 Then 
+			s.ExecNonQuery("delete from terceros where NOMBRE='"& txt_nombre.Text &"' and CELULAR='"& txt_celular.Text &"'")
+			actualiza_ter
+    	End If
+	Else
+    	Id.Hint = "Buscar Cliente (" & c.RowCount & ")"
+    	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+'		Id.Input=tot_fac
+'		Id.InputType=Id.INPUT_TYPE_DECIMAL_NUMBERS
+    	ret = Id.Show("", tit, "Salir", "Aceptar", "",Null)
+    	' Primer botón -1
+		Dim sw As Int
+		sw=-1
+		If ret = -3 Then 
+'-=-=-
+			actualiza_ter
+'-=-=-		
+			For i=0 To c.RowCount - 1
+				If (sf.InString(terceros(i).NOMBRE,sf.Upper(Id.Input))>=0) Or (sf.InString(terceros(i).mail,sf.Upper(Id.Input))>=0)Then
+					sw=i
+				End If
+			Next
+			If sw=-1 Then
+				Msgbox("Cliente No Encontrado",tit)
+			Else
+				lv_ter.SetSelection(sw)
+				lv_ter.RequestFocus
+				lv_ter_ItemLongClick(sw,0)
+			End If
+		End If
+	End If
+	btn_delete.Tag="Buscar"
+	btn_delete.SetBackgroundImage(LoadBitmap(File.DirAssets,"buscar2.png"))
+End Sub
+
+Sub actualiza_ter
+'	lv_ter.Initialize("lv_ter")
+	btn_delete.SetBackgroundImage(LoadBitmap(File.DirAssets,"buscar2.png"))
+	btn_delete.Tag="Buscar"
+	c=s.ExecQuery("select * from terceros order by NOMBRE asc")
+'Msgbox(GetDeviceLayoutValues.Height,"alto")	
+'Msgbox(GetDeviceLayoutValues.Width,"ancho")	
+'Msgbox(lv_ter.Height,"alto "&tam)
+'Msgbox(GetDeviceLayoutValues.Width,"Ancho")
+'	lv_ter.FastScrollEnabled = True
+	lv_ter.color=Colors.RGB(52,35,98)
+	lv_ter.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_ter.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_ter.Height=GetDeviceLayoutValues.Height * 0.68
+	Else
+		lv_ter.SingleLineLayout.ItemHeight = 120 ' galaxy s3
+		lv_ter.Height=GetDeviceLayoutValues.Height * 0.596
+	End If
+	lv_ter.FastScrollEnabled=True
+	lv_ter.Clear
+	If c.RowCount>0 Then
+		spn_ter_mov.Clear
+		For i= 0 To c.RowCount - 1 
+			c.Position=i
+			lv_ter.SingleLineLayout.Label.TextSize=tam_texto
+			If i/2 = Floor(i/2) Then
+				lv_ter.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			Else
+'				lv_ter.SingleLineLayout.Label.TextColor=Colors.Blue
+			End If
+			lv_ter.AddSingleLine ("* " & c.GetString("NOMBRE") & CRLF & c.GetString("CELULAR") & CRLF & c.GetString("DIRECCION"))
+			terceros(i).NOMBRE		=c.GetString("NOMBRE")
+			terceros(i).CELULAR 	=c.GetString("CELULAR")
+			terceros(i).DIRECCION	=c.GetString("DIRECCION")
+			terceros(i).mail		=c.GetString("MAIL")
+			terceros(i).FECHA_REG	=c.GetString("FECHA_REG")
+			terceros(i).ID_TERCERO	=c.GetString("ID_TERCERO")
+			terceros(i).NIT			=c.GetString("NIT")
+			spn_ter_mov.Add(terceros(i).ID_TERCERO & "-" & terceros(i).NOMBRE)
+		Next
+	End If 
+'''	btn_delete.Visible=False
+	btn.Tag="Agregar"
+	txt_nombre.Text=""
+	txt_celular.Text=""
+	txt_direccion.Text=""
+	txt_mail.Text=""
+End Sub
+
+Sub lv_ter_ItemClick (Position As Int, Value As Object)
+	cliente=terceros(Position).ID_TERCERO
+	lbl_carta.Text=cliente
+	c=s.ExecQuery("select * from FACTURAS where vr_pagado=-1 and id_tercero=" & terceros(Position).ID_TERCERO & " and fecha='" & fecha & "'")
+	If c.RowCount>0 Then
+		c.Position=0
+		pedido=c.GetInt("ID_FACTURA")
+		Msgbox("Cliente con Pedido " & pedido,"Informacion" )
+	Else
+		s.ExecNonQuery2("insert into facturas (rowid,ID_TIPO,FECHA,ID_TERCERO,ID_MESERO,VR_PAGADO) values (null,5,?,?,?,?)", Array As Object (fecha,terceros(Position).ID_TERCERO,0,-1))
+		actualiza_pedidos
+		c=s.ExecQuery("select * from FACTURAS where vr_pagado=-1 and id_tercero=" & terceros(Position).ID_TERCERO & " and fecha='" & fecha & "'")
+		c.Position=0
+		pedido=c.GetInt("ID_FACTURA")
+		Msgbox(Value,fecha & "- Pedido : " & pedido)
+	End If
+	c.Close
+	TabBar1.SetTabState(0, True)
+	Panel1.Visible=False
+	Panel2.Visible=True
+	TabBar1.SetTabState(1, False)
+End Sub
+
+Sub lv_ter_ItemLongClick (Position As Int, Value As Object)
+	btn.Tag="Actualizar"
+'	ToastMessageShow("Linea: " & Position ,True)
+	txt_nombre.Text		=terceros(Position).nombre
+	txt_ynombre			=terceros(Position).nombre
+	txt_celular.Text	=terceros(Position).celular
+	txt_direccion.Text	=terceros(Position).direccion
+	txt_mail.Text		=terceros(Position).mail
+'''	btn_delete.Visible	=True
+	btn_delete.Tag="Borrar"
+	btn_delete.SetBackgroundImage(LoadBitmap(File.DirAssets,"borrar.png"))
+End Sub
+
+Sub actualiza_prod
+'	lv_pro.Initialize("lv_pro")
+	c=s.ExecQuery("select * from platos order by descripcion asc")
+	lv_pro.Clear 
+	lv_pro.color=Colors.RGB(52,35,98)
+	lv_pro.FastScrollEnabled=True
+	If tam>=4 Then
+		lv_pro.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_pro.Height=GetDeviceLayoutValues.Height * 0.68
+	Else
+		lv_pro.SingleLineLayout.ItemHeight = 120 ' galaxy s3
+		lv_pro.Height=GetDeviceLayoutValues.Height * 0.596
+	End If
+	lv_pro.FastScrollEnabled=True
+	If c.RowCount>0 Then
+		For i= 0 To c.RowCount - 1 
+			c.Position=i
+			lv_pro.SingleLineLayout.Label.TextSize=tam_texto
+			If i/2 = Floor(i/2) Then
+				lv_pro.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			lv_pro.AddSingleLine (c.GetString("DESCRIPCION") & CRLF & "   $" & NumberFormat2(c.GetInt("PRECIO"),0, 0, 0, True))
+			platos(i).DESCRIPCION	=c.GetString("DESCRIPCION")
+			platos(i).GRUPO 		=c.GetInt("GRUPO")
+			platos(i).PRECIO 		=c.GetInt("PRECIO")
+			platos(i).COSTO			=c.GetInt("COSTO")
+			platos(i).IMAGEN		=c.GetBlob("IMAGEN")
+			platos(i).ID_PLATO		=c.GetInt("ID_PLATO")
+		Next
+	End If 
+	btn_pro_del.Enabled=False
+	btn_pro_add.Tag="Agregar"
+	txt_descripcion.Text=""
+	txt_grupo.Text=""
+	txt_precio.Text=""
+	txt_costo.Text=""
+	c.Close
+End Sub
+
+Sub btn_pro_add_Click
+	If txt_descripcion.Text <> "" Then
+
+		If txt_descripcion.Text = "BORRAR" Then
+			s.ExecNonQuery("delete from platos")
+		Else
+			If btn_pro_add.Tag ="Agregar" Then
+				c=s.ExecQuery("select * from platos where descripcion='" & sf.upper (txt_descripcion.Text) & "'")
+				If c.RowCount>0 Then
+					MsgboxAsync("Ya Existe","Error")
+				Else
+					Buffer=Null
+'--- cargar foto
+'					foto_LongClick
+'---
+					s.ExecNonQuery2("insert into platos (rowid,DESCRIPCION,GRUPO,PRECIO,COSTO,IMAGEN) values (null,?,?,?,?,?)", Array As Object (sf.upper (txt_descripcion.Text),txt_grupo.Text,txt_precio.Text,txt_costo.Text,Buffer))
+				End If
+			Else
+			    Dim NitFields As Map
+    			NitFields.Initialize
+    			NitFields.Put("DESCRIPCION",sf.Upper(txt_descripcion.Text))
+    			NitFields.Put("GRUPO",txt_grupo.Text)
+    			NitFields.Put("PRECIO",txt_precio.Text)
+    			NitFields.Put("COSTO",txt_costo.Text)
+			    NitFields.Put("IMAGEN",Buffer)
+    			Dim WhereFields As Map
+    			WhereFields.Initialize
+    			WhereFields.Put("DESCRIPCION", txt_ynombre) 
+    			DBUtils.UpdateRecord2(s, "PLATOS", NitFields, WhereFields)
+			End If
+		End If
+		actualiza_carta
+		actualiza_prod
+		foto_Click
+	End If
+	txt_descripcion.RequestFocus
+End Sub
+
+Sub lv_pro_ItemClick (Position As Int, Value As Object)
+	If platos(Position).IMAGEN<>Null Then
+	    Buffer=platos(Position).IMAGEN
+		If Buffer.Length<>0 Then
+			cargar_foto(foto)
+		End If
+	End If
+End Sub
+
+Sub lv_pro_ItemLongClick (Position As Int, Value As Object)
+	btn_pro_add.Tag="Actualizar"
+'	ToastMessageShow("Linea: " & Position ,True)
+	txt_descripcion.Text	=platos(Position).descripcion
+	txt_ynombre				=platos(Position).descripcion
+	txt_grupo.Text			=platos(Position).GRUPO
+	txt_precio.Text			=platos(Position).precio
+	txt_costo.Text			=platos(Position).costo
+    Buffer 					=platos(Position).IMAGEN
+	btn_pro_del.Enabled		=True
+	If Buffer<>Null Then
+		If Buffer.Length<>0 Then
+			cargar_foto(foto)
+		End If
+	End If
+End Sub
+
+Sub actualiza_carta 'menu
+'	lv_carta.Initialize("lv_carta")
+	c=s.ExecQuery("select * from platos order by grupo,descripcion asc")
+	lv_carta.Clear 
+'	lv_ter.FastScrollEnabled = True
+	lv_carta.color=Colors.RGB(52,35,98)
+	lv_carta.SingleLineLayout.ItemHeight = 180 
+	lv_carta.FastScrollEnabled=True
+'	lv_carta.TwoLinesAndBitmap.ImageView.Height=40%y
+'	lv_carta.TwoLinesAndBitmap.ImageView.Width=20%x
+	lv_carta.TwoLinesAndBitmap.ImageView.Gravity=Gravity.FILL
+	lv_carta.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_carta.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_carta.Height=GetDeviceLayoutValues.Height * 0.80
+	Else
+		lv_carta.SingleLineLayout.ItemHeight = 120 ' galaxy s3
+		lv_carta.Height=GetDeviceLayoutValues.Height * 0.76
+	End If
+	If c.RowCount>0 Then
+		For i= 0 To c.RowCount - 1 
+			c.Position=i
+'			lv_carta.SingleLineLayout.Label.TextSize=tam_texto
+			If i/2 = Floor(i/2) Then
+				lv_carta.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			carta(i).DESCRIPCION	=c.GetString("DESCRIPCION")
+			carta(i).GRUPO 			=c.GetInt("GRUPO")
+			carta(i).PRECIO 		=c.GetInt("PRECIO")
+			carta(i).COSTO			=c.GetInt("COSTO")
+			carta(i).IMAGEN			=c.GetBlob("IMAGEN")
+			carta(i).ID_PLATO		=c.GetInt("ID_PLATO")
+			If carta(i).IMAGEN<>Null Then
+				Dim InputStream1 As InputStream
+				Dim Bitmap1 As Bitmap
+				InputStream1.InitializeFromBytesArray(carta(i).IMAGEN, 0, carta(i).IMAGEN.Length)
+				Bitmap1.Initialize2(InputStream1)
+				InputStream1.Close
+				lv_carta.AddTwoLinesAndBitmap2(sf.AddSpaces(5) & carta(i).DESCRIPCION,sf.AddSpaces(50) & NumberFormat2(carta(i).PRECIO,0, 0, 0, True),Bitmap1,carta(i).ID_PLATO)
+			Else
+				lv_carta.AddTwoLines2(sf.AddSpaces(5) & carta(i).DESCRIPCION,sf.AddSpaces(55) & NumberFormat2(carta(i).PRECIO,0, 0, 0, True),carta(i).ID_PLATO)
+			End If
+		Next
+	End If
+	c.Close
+End Sub
+
+Sub lv_carta_ItemClick (Position As Int, Value As Object)
+	If lbl_carta.Text="Cliente" Then
+		Msgbox("Elija Cliente","Informacion")
+	Else
+'---		Msgbox(NumberFormat2(carta(Position).PRECIO,0, 0, 0, True),carta(Position).DESCRIPCION)
+		Dim Id As InputDialog
+		Dim ret As Int
+		Id.Hint = "Cantidad # " & pedido
+		Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+		Id.Input=spn_carta.SelectedItem
+		Id.InputType=Id.INPUT_TYPE_DECIMAL_NUMBERS
+		ret = Id.Show("", carta(Position).DESCRIPCION, "Salir", "Aceptar", "",Null)
+		' Primer botón -1
+		If ret = -3 Or ret = -2 Then
+
+'---
+		spn_carta.Visible=True
+		If chk_carta.Checked Then
+			If platos(Value).IMAGEN<>Null Then
+			    Buffer=platos(Value).IMAGEN
+				If Buffer.Length<>0 Then
+					cargar_foto(foto_carta)
+				End If
+			End If
+		End If
+		If restaurante=2 Then
+			s.ExecNonQuery2("insert into facturas_lin (rowid,ID_FACTURA,ID_PLATO,PRECIO,COSTO,CANTIDAD,NOTA) values (null,?,?,?,?,?,?)", Array As Object (pedido,Value,carta(Position).PRECIO,carta(Position).COSTO,1,spn_carta.SelectedItem))
+		Else
+'---			s.ExecNonQuery2("insert into facturas_lin (rowid,ID_FACTURA,ID_PLATO,PRECIO,COSTO,CANTIDAD) values (null,?,?,?,?,?)", Array As Object (pedido,Value,carta(Position).PRECIO,carta(Position).COSTO,spn_carta.SelectedItem))
+			s.ExecNonQuery2("insert into facturas_lin (rowid,ID_FACTURA,ID_PLATO,PRECIO,COSTO,CANTIDAD) values (null,?,?,?,?,?)", Array As Object (pedido,Value,carta(Position).PRECIO,carta(Position).COSTO,Id.Input))
+		End If
+End If
+		actualiza_pedidos
+	End If
+	c.Close
+End Sub
+
+Sub lv_carta_ItemLongClick (Position As Int, Value As Object)
+'------------------------------------
+	If compra<>-1 Then
+		Dim Id As InputDialog
+		Dim ret As Int 
+	   	Id.Hint = "Costo Und  " & carta(Position).COSTO
+	   	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+		Id.Input=""
+		Id.InputType=Id.INPUT_TYPE_DECIMAL_NUMBERS
+	   	ret = Id.Show("", tit, "Salir", "Inventario", "",Null)
+	   	' Primer botón -1
+		If ret = -3 Then 
+			s.ExecNonQuery2("insert into facturas_lin (rowid,ID_FACTURA,ID_PLATO,PRECIO,COSTO,CANTIDAD) values (null,?,?,?,?,?)", Array As Object (compra,Value,0,carta(Position).COSTO,Id.Input))
+			actualiza_compra
+			actualiza_balance
+		End If
+	Else
+		btn_compra_Click
+	End If
+End Sub
+
+Sub actualiza_pedidos
+'	lv_pedidos.Initialize("lv_pedidos")
+	c=s.ExecQuery("select F.ID_FACTURA,F.FECHA,F.VR_PAGADO,T.NOMBRE,sum(l.cantidad*l.precio) as total from facturas f left join facturas_lin l on l.id_factura=f.id_factura left join terceros t on t.id_tercero=f.id_tercero where f.FECHA='" & fecha & "' and f.vr_pagado=-1 and f.id_tipo=5 group by F.ID_FACTURA,F.FECHA,F.VR_PAGADO,T.NOMBRE order by f.id_factura asc")
+	lv_pedidos.Clear 
+'	lv_ter.FastScrollEnabled = True
+	lv_pedidos.color=Colors.RGB(52,35,98)
+	lv_pedidos.FastScrollEnabled=True
+	lv_pedidos.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_pedidos.SingleLineLayout.ItemHeight = 100 ' galaxy s5
+		lv_pedidos.Height=GetDeviceLayoutValues.Height * 0.85
+	Else
+		lv_pedidos.SingleLineLayout.ItemHeight = 50 ' galaxy s3
+		lv_pedidos.Height=GetDeviceLayoutValues.Height * 0.82
+	End If
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			lv_pedidos.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(i/2) Then
+				lv_pedidos.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			lv_pedidos.AddSingleLine2 (c.GetInt("ID_FACTURA") & " - " & c.GetString("NOMBRE") & " -        $" & NumberFormat2(c.GetInt("total"),0, 0, 0, True),c.GetInt("total"))
+			facturas(j).ID_FACTURA	=c.GetInt("ID_FACTURA")
+'			reg_fac(j).GRUPO 		=c.GetInt("GRUPO")
+		Next
+	End If 
+	c.Close
+End Sub
+
+Sub lv_pedidos_ItemClick (Position As Int, Value As Object)
+	pedido=facturas(Position).ID_FACTURA
+	cliente=facturas(Position).ID_TERCERO
+	lbl_carta.Text=cliente
+	If Value=0 Then
+		Panel3.Visible=False
+		Panel2.Visible=True
+		TabBar1.SetTabState(1, False)
+		TabBar1.SetCurrentTab(1,True)
+	End If
+'Msgbox(Value,pedido)
+	c=s.ExecQuery("select l.id_factura,l.id_plato,p.descripcion,l.cantidad,l.precio,l.costo,l.id_factura_lin from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero where f.id_factura=" & pedido & " order by l.id_plato asc")
+	lv_pedidos_det.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_pedidos_det.SingleLineLayout.ItemHeight = 200 ' galaxy s5
+		lv_pedidos_det.Height=GetDeviceLayoutValues.Height * 0.72
+	Else
+		lv_pedidos_det.SingleLineLayout.ItemHeight = 100 ' galaxy s3
+		lv_pedidos_det.Height=GetDeviceLayoutValues.Height * 0.685
+	End If
+	If c.RowCount>0 Then
+		lv_pedidos_det.Visible=True
+		lv_pedidos_det.Clear 
+		lv_pedidos_det.color=Colors.RGB(152,35,98)
+		lv_pedidos_det.FastScrollEnabled=True
+		tot_fac=0
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			lv_pedidos_det.SingleLineLayout.Label.TextSize=tam_texto
+'			If j/2 = Floor(i/2) Then
+				lv_pedidos_det.SingleLineLayout.Label.TextColor=Colors.Yellow 
+'			End If
+			lv_pedidos_det.AddSingleLine2(c.GetString("DESCRIPCION") & CRLF & c.GetInt("PRECIO") & " x " & c.GetInt("CANTIDAD"),c.GetInt("ID_FACTURA_LIN"))
+'			facturas(i).ID_FACTURA	=c.GetInt("ID_FACTURA")
+			tot_fac=tot_fac+(c.GetInt("PRECIO") * c.GetInt("CANTIDAD"))
+		Next
+		lv_pedidos_det.AddSingleLine2 ("**********TOTAL FACTURA" & CRLF & sf.AddSpaces(25) & NumberFormat2(tot_fac,0, 0, 0, True),"****")
+	End If 
+	c.Close
+End Sub
+
+Sub lv_pedidos_ItemLongClick (Position As Int, Value As Object)
+	lv_pedidos_det.Visible=False
+End Sub
+
+Sub lv_pedidos_det_ItemClick (Position As Int, Value As Object)
+	If sf.Left(Value,4)="****" Then
+	'Id.PasswordMode = True
+	'Id.InputType = Id.INPUT_TYPE_DECIMAL_NUMBERS
+	'Id.InputType = Id.INPUT_TYPE_NUMBERS
+	'Id.InputType = Id.INPUT_TYPE_PHONE
+		Dim Id As InputDialog
+		Dim ret As Int 
+    	Id.Hint = "Pagar el Pedido # " & pedido
+    	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+		Id.Input=tot_fac
+		Id.InputType=Id.INPUT_TYPE_DECIMAL_NUMBERS
+    	ret = Id.Show("", tit, "Salir", "Pagar", "Credito",Null)
+    	' Primer botón -1
+		If ret = -3 Or ret = -2 Then 
+			If ret = -2 Then
+				s.ExecNonQuery("update facturas set VR_TOTAL=" & tot_fac & " , VR_PAGADO=0 , NOTAS = 'CREDITO' where id_factura=" & pedido)
+			Else
+				s.ExecNonQuery("update facturas set VR_TOTAL=" & tot_fac & " , VR_PAGADO=" & Id.Input & " where id_factura=" & pedido)
+			End If
+'--
+			Id.InputType=Id.INPUT_TYPE_NONE
+			Id.Input=""
+		    Id.Hint = "Imprimir Factura"
+	    	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+    		ret = Id.Show("", tit, "Imprimir", "Cancelar", "",Null)
+    		If ret = -1 Then
+'---				btAdmin.Initialize("BlueTeeth")
+'---				cmp20.Initialize("Printer")
+				StartPrinter
+'---				printer.Close
+'---				cmp20.Disconnect
+			End If
+			actualiza_balance
+			actualiza_pedidos
+			lbl_carta.Text="Cliente"
+		End If
+	End If
+	spn_carta.SelectedIndex=1
+	lv_pedidos_det.Visible=False
+	Panel3.Visible=False
+	TabBar1.SetTabState(2, True)
+	Panel1.Visible=True
+	TabBar1.SetTabState(0, False)
+	TabBar1.SetCurrentTab(0,True)
+End Sub
+
+Sub lv_pedidos_det_ItemLongClick (Position As Int, Value As Object)
+	Msgbox(sf.InString(Value,"*TOTAL"),sf.InString(Value,"**TOTAL"))
+	If sf.InString(Value,"**********TOTAL")<0 Then
+		Msgbox("Item Eliminado",Value)
+		s.ExecNonQuery("delete from facturas_lin where id_factura=" & pedido & " and id_factura_lin=" & Value)
+		actualiza_pedidos
+		lv_pedidos_det.Visible=False
+		lv_pedidos_ItemClick(0,0)
+	End If
+End Sub
+
+Sub actualiza_balance
+	lv_balance.Clear 
+'	lv_ter.FastScrollEnabled = True
+	lv_balance.color=Colors.RGB(52,35,98)
+	lv_balance.SingleLineLayout.ItemHeight = 150 
+	lv_balance.FastScrollEnabled=True
+	tot_dia=0
+	mensaje ="Reporte Dia" & CRLF
+	mensaje=mensaje & "------------------------------" & CRLF
+	c=s.ExecQuery("select max(f.id_tipo) as tipo,'***INVENTARIO' as DESCRIPCION,count(*) as tot_can,sum(l.cantidad*l.costo) as total from facturas_lin l left join facturas f on f.id_factura=l.id_factura where f.id_tipo=1 and f.fecha='" & fecha & "'")
+	lv_balance.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_balance.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_balance.Height=GetDeviceLayoutValues.Height * 0.85
+	Else
+		lv_balance.SingleLineLayout.ItemHeight = 120 ' galaxy s3
+		lv_balance.Height=GetDeviceLayoutValues.Height * 0.82
+	End If
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1  
+			c.Position=j
+			lv_balance.AddSingleLine (c.GetInt("tipo") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True))
+'			tot_dia=tot_dia-c.GetInt("total")
+			mensaje=mensaje & c.GetInt("tipo") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True) & CRLF
+		Next
+		mensaje=mensaje & CRLF
+	End If
+	mensaje=mensaje & "------------------------------" & CRLF
+	c=s.ExecQuery("select max(f.id_tipo) as tipo,'***VENTAS HOY' as DESCRIPCION,count(*) as tot_can,sum(l.cantidad*l.precio) as total from facturas_lin l left join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato where f.id_tipo=5 and f.FECHA='" & fecha & "' and f.vr_pagado>-1")
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			lv_balance.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(i/2) Then
+				lv_balance.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			tot_dia=tot_dia+c.GetInt("total")
+			lv_balance.AddSingleLine (c.GetInt("tipo") & " - " & c.GetString("DESCRIPCION") & " -  (" & c.GetInt("tot_can") & ")" & CRLF & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True))
+			mensaje=mensaje & c.GetInt("tipo") & " - " & c.GetString("DESCRIPCION") & " -  (" & c.GetInt("tot_can") & ")" & CRLF & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True) & CRLF
+		Next
+		mensaje=mensaje & CRLF
+	Else
+		j=-1
+		c.Position=j+1
+		lv_balance.AddSingleLine ("*****Total Ventas Dia    $" & NumberFormat2(tot_dia,0, 0, 0, True))
+		j=1
+	End If
+	mensaje=mensaje & "------------------------------" & CRLF
+	c=s.ExecQuery("select min(fecha) as FECHA,'***CARTERA' as DESCRIPCION,count(*) as tot_can,sum(f.vr_total-f.vr_pagado) as total from facturas f where f.vr_pagado=0 and f.fecha<='" & fecha & "'")
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1  
+			c.Position=j
+			lv_balance.AddSingleLine (c.GetString("FECHA") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True))
+			mensaje=mensaje & c.GetString("FECHA") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True)
+		Next
+		mensaje=mensaje & CRLF
+	End If
+	mensaje=mensaje & "------------------------------" & CRLF
+	c=s.ExecQuery("select min(fecha) as FECHA,'***CLIENTES' as DESCRIPCION,count(*) as tot_can,sum(f.vr_total) as total from facturas f where f.vr_pagado<>-1 and f.fecha='" & fecha & "'")
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1  
+			c.Position=j
+			lv_balance.AddSingleLine (c.GetString("FECHA") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True))
+			mensaje=mensaje & c.GetString("FECHA") & " - " & c.GetString("DESCRIPCION")  & " (" & c.GetInt("tot_can") & ")" & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True)
+		Next
+		mensaje=mensaje & CRLF
+	End If
+	c=s.ExecQuery("select m.id_tipo,case when m.id_tipo=10 then 'INGRESOS' else 'GASTOS' end as DESCRIPCION,count(*) as tot_can,sum(m.valor) as total from movimiento m where m.fecha='" & fecha & "' group by m.id_tipo")
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			lv_balance.AddSingleLine (c.GetInt("ID_TIPO") & " - " & c.GetString("DESCRIPCION") & " (" & c.GetInt("tot_can") & ")" & CRLF & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True))
+			mensaje=mensaje & c.GetInt("ID_TIPO") & " - " & c.GetString("DESCRIPCION") & " (" & c.GetInt("tot_can") & ")" & CRLF & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True)
+			tot_dia=tot_dia+c.GetInt("total")
+		Next
+		mensaje=mensaje & CRLF
+	End If
+	mensaje=mensaje & "------------------------------" & CRLF
+	c.Position=j+1
+	lv_balance.AddSingleLine("*****Balance Dia    $" & NumberFormat2(tot_dia,0, 0, 0, True))
+	mensaje=mensaje & "------------------------------" & CRLF
+	c=s.ExecQuery("select min(fecha) as FECHA,'***CARTERA HOY' as DESCRIPCION,count(*) as tot_can,sum(f.vr_total-f.vr_pagado) as total from facturas f where f.vr_pagado=0 and f.fecha='" & fecha & "'")
+	If c.RowCount>0 Then
+		c.Position=0
+		tot_dia=tot_dia-c.GetInt("total")
+	End If
+	c.Position=j
+	lv_balance.AddSingleLine("*****Efectivo Dia    $" & NumberFormat2(tot_dia,0, 0, 0, True))
+	c.Close
+End Sub
+
+Sub lv_balance_ItemClick (Position As Int, Value As Object)
+	lv_balance_det.SingleLineLayout.Label.TextSize=tam_texto
+	lv_balance_det.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_balance_det.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_balance_det.Height=GetDeviceLayoutValues.Height * 0.90
+	Else
+		lv_balance_det.SingleLineLayout.ItemHeight = 120 ' galaxy s3
+		lv_balance_det.Height=GetDeviceLayoutValues.Height * 0.71
+	End If
+	lv_balance_det.Clear
+	lv_balance_det.color=Colors.RGB(52,35,240)
+	If sf.InString(Value,"****Balance")>=0 Then
+   		'Crear
+		destEmailAdress=mail
+		SMTP1.Initialize(server, port, emailname, password, protocol)
+   		SMTP1.UseSSL = True
+   		' Enviar
+   		SMTP1.To.Add (destEmailAdress)
+		Dim p As Phone
+   		SMTP1.Subject = Application.LabelName & " " & p.Manufacturer &" - "& p.Model & " Balance Dia : " & fecha & " Total :" & NumberFormat2(tot_dia,0, 0, 0, True) 
+   		SMTP1.Body = mensaje
+'-  		SMTP1.AddAttachment(File.DirInternal, "archivo.pdf")
+'-		SMTP1.HtmlBody=True
+   		SMTP1.Send
+		ToastMessageShow(mail,True)
+	End If
+	If sf.InString(Value,"***VENTAS")>=0 Then
+		c=s.ExecQuery("select p.descripcion,count(*) as tot_can,sum(l.cantidad*l.precio) as total from facturas_lin l left join facturas f on f.id_factura=l.id_factura left join platos p on p.id_plato=l.id_plato where f.id_tipo=5 and f.fecha='" & fecha & "' group by p.descripcion order by p.descripcion")
+		If c.RowCount>0 Then
+			mensaje=mensaje & "VENTAS" & CRLF
+			mensaje=mensaje & "------------------------------" & CRLF
+			lv_balance_det.Visible=True
+			tot_fac=0
+			lv_balance_det.SingleLineLayout.Label.TextColor=Colors.White
+			For i= 0 To c.RowCount - 1  
+				c.Position=i
+				lv_balance_det.AddSingleLine2 (c.GetString("DESCRIPCION") & CRLF & "(" & c.GetInt("tot_can") & ")    " & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True),"V")
+				mensaje=mensaje & c.GetString("DESCRIPCION") & CRLF & "(" & c.GetInt("tot_can") & ")    " & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True) & CRLF
+				tot_fac=tot_fac+c.GetInt("total")
+			Next
+			c.Position=i+1
+			lv_balance_det.AddSingleLine2 ("*****Ventas  Hoy   $" & NumberFormat2(tot_fac,0, 0, 0, True),"V")
+			mensaje=mensaje & "------------------------------" & CRLF
+		End If
+	End If
+	If sf.InString(Value,"***CARTERA")>=0 Then
+		c=s.ExecQuery("select f.id_factura,t.nombre,f.fecha,(f.vr_total-f.vr_pagado) as total from facturas f left join terceros t on t.id_tercero=f.id_tercero where (f.vr_total-f.vr_pagado)>0 and f.fecha<='" & fecha & "' order by f.id_tercero,f.fecha")
+		If c.RowCount>0 Then
+			mensaje=mensaje & "CARTERA" & CRLF
+			mensaje=mensaje & "------------------------------" & CRLF
+			lv_balance_det.Visible=True
+			tot_fac=0
+			lv_balance_det.SingleLineLayout.Label.TextColor=Colors.White
+			For i= 0 To c.RowCount - 1  
+				c.Position=i
+				lv_balance_det.AddSingleLine2 (c.GetString("NOMBRE") & " - " & c.GetString("FECHA")  & CRLF & "Nro (" & c.GetInt("ID_FACTURA") & ")    " & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True),"C")
+				mensaje=mensaje & c.GetString("NOMBRE") & " - " & c.GetString("FECHA")  & CRLF & "Nro (" & c.GetInt("ID_FACTURA") & ")    " & sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True) & CRLF
+				tot_fac=tot_fac+c.GetInt("total")
+			Next
+			c.Position=i+1
+			lv_balance_det.AddSingleLine2 ("*****Cartera a Hoy   $" & NumberFormat2(tot_fac,0, 0, 0, True),"C")
+			mensaje=mensaje & "------------------------------" & CRLF
+		End If
+	End If
+	If sf.InString(Value,"***INVENTARIO")>=0 Then
+		c=s.ExecQuery("select p.descripcion,sum(l.cantidad) as tot_can,sum(l.cantidad*l.costo) as total,(select sum(case when f2.id_tipo=1 then 1 else -1 end * l2.cantidad) from facturas_lin l2 left join facturas f2 on f2.id_factura=l2.id_factura where l2.id_plato=l.id_plato)as saldo from facturas_lin l left join facturas f on f.id_factura=l.id_factura  left join platos p on p.id_plato=l.id_plato where f.id_tipo=1 and f.fecha='" & fecha & "' group by p.descripcion order by p.descripcion")
+		If c.RowCount>0 Then
+			mensaje=mensaje & "INVENTARIO" & CRLF
+			mensaje=mensaje & "------------------------------" & CRLF
+			lv_balance_det.Visible=True
+			tot_fac=0
+			lv_balance_det.SingleLineLayout.Label.TextColor=Colors.White
+			For i= 0 To c.RowCount - 1  
+				c.Position=i
+				lv_balance_det.AddSingleLine2 (c.GetString("DESCRIPCION") & CRLF & "Cmp (" & c.GetInt("tot_can") & ")  Saldo (" & c.GetInt("saldo") & ")  $" & NumberFormat2(c.GetInt("total"),0, 0, 0, True),"I")
+				mensaje=mensaje & c.GetString("DESCRIPCION") & CRLF & "Cmp (" & c.GetInt("tot_can") & ")  Saldo (" & c.GetInt("saldo") & ")  $" & NumberFormat2(c.GetInt("total"),0, 0, 0, True) & CRLF
+				tot_fac=tot_fac+c.GetInt("total")
+			Next
+			c.Position=i+1
+			lv_balance_det.AddSingleLine2 ("*****Inventario a Hoy   $" & NumberFormat2(tot_fac,0, 0, 0, True),"I")
+			mensaje=mensaje & "------------------------------" & CRLF
+		End If
+	End If
+	If sf.InString(Value,"***CLIENTES")>=0 Then
+		c=s.ExecQuery("select f.fecha,f.id_factura, t.nombre,f.vr_total as total from facturas f left join terceros t on t.id_tercero=f.id_tercero where f.vr_pagado<>-1 and f.fecha='" & fecha & "'")
+		If c.RowCount>0 Then
+			lv_balance_det.Visible=True
+			For i= 0 To c.RowCount - 1  
+				c.Position=i
+				lv_balance_det.AddSingleLine2(c.GetString("ID_FACTURA") & " - CLI: " & c.GetString("NOMBRE")  & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True),c.GetString("ID_FACTURA"))
+				mensaje=mensaje & c.GetString("FECHA") & " - " & c.GetString("ID_FACTURA")  & c.GetString("NOMBRE") &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("total"),0, 0, 0, True)
+			Next
+			mensaje=mensaje & CRLF
+		End If
+	End If
+	If sf.InString(Value,"INGRESOS")>=0 Then
+		c=s.ExecQuery("select f.fecha,f.id_factura, t.nombre,f.vr_pagado from facturas f left join terceros t on t.id_tercero=f.id_tercero where f.vr_pagado<>-1 and f.fecha='" & fecha & "'")
+		If c.RowCount>0 Then
+			lv_balance_det.Visible=True
+			For i= 0 To c.RowCount - 1
+				c.Position=i
+				lv_balance_det.AddSingleLine2(c.GetString("ID_FACTURA") & " - CLI: " & c.GetString("NOMBRE")  & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("VR_PAGADO"),0, 0, 0, True),c.GetInt("ID_FACTURA"))
+				mensaje=mensaje & c.GetString("FECHA") & " - " & c.GetString("ID_FACTURA")  & c.GetString("NOMBRE") &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("VR_PAGADO"),0, 0, 0, True)
+			Next
+			mensaje=mensaje & CRLF
+		End If
+	End If
+	If sf.InString(Value,"GASTOS")>=0 Then
+		c=s.ExecQuery("select m.FECHA,m.ID_TERCERO,t.NOMBRE,m.DESCRIPCION,m.VALOR from MOVIMIENTO m left join TERCEROS t on t.ID_TERCERO=m.ID_TERCERO where m.VALOR<0 and M.fecha='" & fecha & "'")
+		If c.RowCount>0 Then
+			lv_balance_det.Visible=True
+			For i= 0 To c.RowCount - 1
+				c.Position=i
+				lv_balance_det.AddSingleLine2(c.GetString("ID_TERCERO") & " - CLI: " & c.GetString("NOMBRE")  & CRLF &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("VALOR"),0, 0, 0, True),c.GetString("DESCRIPCION"))
+				mensaje=mensaje & c.GetString("FECHA") & " - " & c.GetString("ID_TERCERO")  & c.GetString("NOMBRE") &  sf.AddSpaces(25) & "$" & NumberFormat2(c.GetInt("VALOR"),0, 0, 0, True) & c.GetString("DESCRIPCION")
+			Next
+			mensaje=mensaje & CRLF
+		End If
+	End If
+End Sub
+
+Sub lv_balance_det_ItemLongClick (Position As Int, Value As Object)
+	If Value<> "*" And sf.Val(Value)<>0 Then
+		c=s.ExecQuery("select * from facturas where id_factura=" & Value)
+		c.Position=0
+		If c.GetInt("VR_PAGADO")=0 Then
+			Msgbox("Contado Factura:" & Value,tit)
+			s.ExecNonQuery("update facturas set VR_PAGADO=VR_TOTAL , NOTAS = 'CONTADO' where id_factura=" & Value)
+		Else
+			Msgbox("Credito Factura:" & Value,tit)
+			s.ExecNonQuery("update facturas set VR_PAGADO=0 , NOTAS = 'CREDITO' where id_factura=" & Value)
+		End If
+		actualiza_pagos
+		actualiza_balance
+	Else
+	End If
+End Sub
+
+Sub menu
+	c=s.ExecQuery("select * from platos order by grupo,descripcion asc")
+	If c.RowCount>0 Then
+		Dim x_ As Int  
+		x_=50
+		For i= 0 To c.RowCount - 1 
+			c.Position=i
+'			Activity.AddView(ListView1, 0,27%y, 100%x, 100%y)
+'			Activity.AddView(lblCountry,100dip,77dip,225dip,40dip)
+'			Activity.AddView(Spinner1,100dip,120dip,258dip,40dip)
+			Dim Img1 As ImageView
+'			Activity.AddView(img,0,50,Int((GetDeviceLayoutValues.Width/2)*0.9),Int((GetDeviceLayoutValues.Height/4)))
+			Img1.Initialize("Img1")
+			Activity.AddView(Img1,x_+0dip,(i+1)*30%y,40%x,40%y)
+			Dim InputStream1 As InputStream
+			Buffer=c.GetBlob("IMAGEN")
+			InputStream1.InitializeFromBytesArray(Buffer, 0, Buffer.Length)
+			Dim Bitmap1 As Bitmap
+			Bitmap1.Initialize2(InputStream1)
+			InputStream1.Close
+			Img1.Bitmap=(Bitmap1)
+'			ScrollView1.Panel.AddView(Img1, 5dip, 5dip + i * 200dip, ScrollView1.Width - 10dip, 190dip)
+    		x_=x_+50
+		Next
+	End If
+End Sub
+
+Sub Img1_Click
+	Img1.SendToBack
+	Img1.Bitmap=Null
+End Sub
+
+Sub txt_mail_EnterPressed
+	If sf.InString(txt_mail.Text,"@")<3 Then
+		Msgbox("Correo Errado","Error")
+	End If
+End Sub
+
+Sub cargar_foto(img As ImageView)
+	img.Left=(GetDeviceLayoutValues.Width/2)*0.2
+	img.Top=(GetDeviceLayoutValues.Height/2)*0.8
+	img.Width=80%x
+	img.Height=40%y
+	Dim InputStream1 As InputStream
+	InputStream1.InitializeFromBytesArray(Buffer, 0, Buffer.Length)
+	Dim Bitmap1 As Bitmap
+	Bitmap1.Initialize2(InputStream1)
+	InputStream1.Close
+	img.BringToFront
+	img.Bitmap=(Bitmap1)
+End Sub
+
+Sub btn_pro_del_Click
+	Dim Id As InputDialog
+	Dim ret As Int 
+    Id.Hint = txt_descripcion.Text 
+    Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+    ret = Id.Show("", tit, "Borrar", "Cancelar", "",Null)
+    ' Primer botón -1
+    If ret = -1 Then 
+		s.ExecNonQuery("delete from platos where DESCRIPCION='"& txt_descripcion.Text &"' and PRECIO="& txt_precio.Text)
+		actualiza_prod
+    End If
+End Sub
+
+Sub actualiza_pagos
+	c=s.ExecQuery("select m.fecha,t.nombre,m.descripcion,m.valor from movimiento m left join terceros t on t.id_tercero=m.id_tercero where m.fecha='" & fecha & "' order by id_movimiento")
+	lv_movimiento.Clear 
+'	lv_ter.FastScrollEnabled = True
+	lv_movimiento.color=Colors.RGB(52,35,98)
+	lv_movimiento.FastScrollEnabled=True
+	Dim tot_deb,tot_cre As Int
+	tot_deb=0
+	tot_cre=0
+	lv_movimiento.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_movimiento.SingleLineLayout.ItemHeight = 160 ' galaxy s5
+		lv_movimiento.Height=GetDeviceLayoutValues.Height * 0.65
+	Else
+		lv_movimiento.SingleLineLayout.ItemHeight = 90 ' galaxy s3
+		lv_movimiento.Height=GetDeviceLayoutValues.Height * 0.59
+	End If
+	If c.RowCount>0 Then
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			lv_movimiento.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(i/2) Then
+				lv_movimiento.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			If c.GetInt("VALOR")>0 Then
+				tot_deb=tot_deb+c.GetInt("VALOR")
+			Else
+				tot_cre=tot_cre+Abs(c.GetInt("VALOR"))
+			End If
+			lv_movimiento.AddSingleLine (c.GetString("NOMBRE") & CRLF  & c.GetString("DESCRIPCION") & "  " & NumberFormat2(c.GetInt("VALOR"),0, 0, 0, True))
+'			facturas(j).ID_FACTURA	=c.GetInt("ID_FACTURA")
+'			reg_fac(j).GRUPO 		=c.GetInt("GRUPO")
+		Next
+		lv_movimiento.SingleLineLayout.Label.TextColor=Colors.White
+		lv_movimiento.SingleLineLayout.Label.TextColor = ThemeColor("Font1")
+		c.Position=j+1
+		lv_movimiento.AddSingleLine ("*****Total Ingresos Dia    $" & CRLF  & sf.AddSpaces(20) & NumberFormat2(tot_deb,0, 0, 0, True))
+		c.Position=j+1
+		lv_movimiento.AddSingleLine ("*****Total Gastos Dia      $" & CRLF  & sf.AddSpaces(20) & NumberFormat2(tot_cre,0, 0, 0, True))
+		c.Position=j+1
+		lv_movimiento.AddSingleLine ("*****Total Movimiento Dia  $" & CRLF  & sf.AddSpaces(20) & NumberFormat2(tot_deb-tot_cre,0, 0, 0, True))
+	End If 
+	c.Close
+End Sub
+
+Sub ThemeColor(ColorName As String) As Object
+   Dim CT As Theme
+   CT.Initialize
+   CT = Themes.get(CurrentTheme)
+   If ColorName = "Background" Then Return Colors.ARGB(CT.b.a,CT.b.R,CT.B.g,CT.B.b)
+   If ColorName = "PostBack" Then Return Colors.ARGB(CT.pb.a,CT.pb.R,CT.pB.g,CT.pB.b)
+   If ColorName = "Font1" Then Return Colors.ARGB(CT.fc.a,CT.fc.R,CT.fc.g,CT.fc.b)
+   If ColorName = "Font2" Then Return Colors.ARGB(CT.sfc.a,CT.sfc.R,CT.sfc.g,CT.sfc.b)
+   If ColorName = "Highlight" Then Return Colors.ARGB(CT.pbh.a,CT.pbh.R,CT.pbh.g,CT.pbh.b)
+   If ColorName = "MenuBack" Then Return Colors.ARGB(CT.mbg.a,CT.mbg.R,CT.mbg.g,CT.mbg.b)   
+End Sub
+
+Sub foto_Click 
+	foto.SendToBack
+	foto.Bitmap=Null
+End Sub
+
+Sub foto_LongClick
+'	Dim Bmp As Bitmap
+	Dim fd As FileDialog
+	Dim ret As Int
+	fd.FastScroll = True
+	fd.FilePath = File.Combine(File.DirDefaultExternal,"/downloads/")
+	fd.FileFilter = ".jpg"
+	Msgbox (File.DirDefaultExternal, "DirInternal")
+	
+'	fd.FilePath = File.DirDefaultExternal  ' Para ir a la raiz del SD Card
+	' fd.FilePath = File.Combine(File.DirRootExternal, "/Android/") ' Para ir a esa carpeta del SD Card
+'	fd.FileFilter = ".jpg" ' Para filtrar jpg
+	ret=fd.Show("Elige archivo", "Sí", "No", "", Null)
+	'    Msgbox("Ruta = " & fd.FilePath,"Ruta")
+	'    Msgbox("Archivo = " & fd.ChosenName,"Archivo")
+	'convert the image file to a bytes array
+	If ret=-1 Then ' Si
+	    Dim InputStream1 As InputStream
+	    InputStream1 = File.OpenInput(fd.FilePath, fd.ChosenName)
+	    Dim OutputStream1 As OutputStream
+'	    OutputStream1.InitializeToBytesArray(1000)
+	    OutputStream1.InitializeToBytesArray(Buffer.Length)
+		File.Copy2(InputStream1, OutputStream1)
+		Buffer = OutputStream1.ToBytesArray
+		If (Buffer.Length>500000) Then
+			Buffer=Null
+			Msgbox("Imagen NO Cargada","Imagen")
+		End If
+	End If
+End Sub
+
+Sub Button1_Click
+	menu
+End Sub
+
+Sub foto_carta_Click
+	foto_carta.SendToBack
+	foto_carta.Bitmap=Null
+End Sub
+
+Sub foto_carta_LongClick
+	
+End Sub
+
+Sub chk_carta_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Sub spn_carta_ItemClick (Position As Int, Value As Object)
+	If Value=0 Then
+		Dim Id As InputDialog
+		Dim ret As Int 
+    	Id.Hint = "Cantidad (" & spn_carta.Size & ")"
+    	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+		Id.Input=""
+		Id.InputType=Id.INPUT_TYPE_DECIMAL_NUMBERS
+    	ret = Id.Show("", tit, "", "Aceptar", "",Null)
+		spn_carta.Add(Id.Input)
+		spn_carta.SelectedIndex=spn_carta.Size -1
+	End If
+End Sub
+
+Sub btn_mov_Click
+	If txt_detalle_mov.Text <> "" Then
+		If txt_detalle_mov.Text = "BORRAR" Then
+			s.ExecNonQuery("delete from movimiento")
+		Else
+			If btn_mov.Tag ="Agregar" Then
+				Dim tipo,xid_tipo,xid_tercero As Int
+				xid_tercero=sf.Left(spn_ter_mov.SelectedItem,sf.At(spn_ter_mov.SelectedItem,"-"))
+				If btn_debito.Checked=True Then
+					tipo=1
+					xid_tipo=10
+					If spn_ter_cxc.SelectedItem<>"" Then
+						s.ExecNonQuery("update facturas set vr_pagado=vr_pagado + " & txt_valor_mov.Text & " where id_tercero=" & xid_tercero & " and id_factura=" & sf.Left(spn_ter_cxc.SelectedItem,sf.At(spn_ter_cxc.SelectedItem,"-")) )
+					Else if txt_detalle_mov.Text <> "" Then
+						s.ExecNonQuery("update facturas set vr_pagado=vr_pagado + " & txt_valor_mov.Text & " where id_tercero=" & xid_tercero & " and id_factura=" & txt_detalle_mov.Text)
+					End If
+				Else
+					tipo=-1
+					xid_tipo=50
+				End If
+'Msgbox(xid_tercero,sf.At(spn_ter_mov.SelectedItem,"-"))
+				s.ExecNonQuery2("insert into movimiento (rowid,id_tipo,id_tercero,descripcion,fecha,valor) values (null,?,?,?,?,?)", Array As Object (xid_tipo,xid_tercero,sf.Upper(txt_detalle_mov.Text),fecha,txt_valor_mov.Text*tipo))
+			Else
+			    Dim NitFields As Map
+    			NitFields.Initialize
+    			NitFields.Put("DESCRIPCION",sf.Upper(txt_descripcion.Text))
+    			NitFields.Put("GRUPO",txt_grupo.Text)
+    			NitFields.Put("PRECIO",txt_precio.Text)
+    			NitFields.Put("COSTO",txt_costo.Text)
+			    NitFields.Put("IMAGEN",Buffer)
+    			Dim WhereFields As Map
+    			WhereFields.Initialize
+    			WhereFields.Put("DESCRIPCION", txt_ynombre) 
+    			DBUtils.UpdateRecord2(s, "PLATOS", NitFields, WhereFields)
+			End If
+		End If
+		actualiza_pagos
+		actualiza_balance
+	End If
+	txt_detalle_mov.Text=""
+	txt_valor_mov.Text=""
+	spn_ter_cxc.Visible=False
+	spn_ter_mov.RequestFocus
+End Sub
+
+Sub btn_delete_mov_Click
+	
+End Sub
+
+Sub StartPrinter
+	Dim PairedDevices As Map
+	Dim L As List
+	Dim Res As Int
+	ToastMessageShow("Printing.....",True)
+	PairedDevices.Initialize
+	Try
+		PairedDevices = cmp20.GetPairedDevices
+	Catch
+		Msgbox("Recuperando Dispositivos","Printer Error")
+		printer.Close
+		cmp20.Disconnect
+	End Try
+
+	If PairedDevices.Size = 0 Then
+		Msgbox("Impresora No Encontrada","Error")
+		Return
+	End If
+
+	If PairedDevices.Size = 1 Then
+		Try
+			cmp20.ConnectInsecure(btAdmin,PairedDevices.Get(PairedDevices.GetKeyAt(0)),1)
+		Catch
+			Msgbox("Connecting","Printer Error")
+			printer.Close
+			cmp20.Disconnect
+		End Try
+	Else
+		L.Initialize
+
+		For i = 0 To PairedDevices.Size - 1
+			L.Add(PairedDevices.GetKeyAt(i))
+		Next
+
+		Res = InputList(L, "Elija Impresora", -1)
+
+		If Res <> DialogResponse.CANCEL Then
+			cmp20.Connect(PairedDevices.Get(L.Get(Res)))
+		End If
+	End If	
+End Sub
+
+Sub Printer_Connected (Success As Boolean)
+	If Success Then
+		c=s.ExecQuery("select f.ID_FACTURA,f.FECHA,t.NOMBRE,t.MAIL,p.DESCRIPCION,l.CANTIDAD,l.PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero where f.id_factura=" & pedido & " order by l.id_factura_lin asc")
+		printer.Initialize(cmp20.OutputStream)
+		printer.WriteLine(PrintBuffer)
+		If c.RowCount>0 Then
+			c.Position=0
+			printer.WriteLine(sf.AddSpaces(15-(sf.Len(tit)/2)) & tit)
+			printer.WriteLine(sf.AddSpaces(15-(sf.Len(stit)/2)) & stit)
+			printer.WriteLine(sf.AddSpaces(12-(sf.Len(rut)/2)) & "NIT : " & rut)
+'-			printer.WriteLine(sf.AddSpaces(15-(sf.Len(dir)/2)) & dir)
+			printer.WriteLine(sf.AddSpaces(10-(sf.Len(tel)/2)) & "CELULAR : " & tel)
+			printer.WriteLine("     Factura N : " & c.GetInt("ID_FACTURA"))
+			printer.WriteLine("     Fecha    :" & c.GetString("FECHA"))
+			printer.WriteLine("-----------------------------")
+			printer.WriteLine("CLIENTE:" & c.getString("NOMBRE"))
+			printer.WriteLine(c.getString("MAIL"))
+			printer.WriteLine("-----------------------------")
+			printer.WriteLine("Producto   Cant  VrUnd  Total")
+			printer.WriteLine("-----------------------------")
+			tot_fac=0
+			Dim tot_lin As Int
+			For i=0 To c.RowCount -1
+				c.Position=i
+				printer.Write(c.getstring("DESCRIPCION"))
+				If sf.Len(c.getstring("DESCRIPCION"))>12 Then
+					printer.Writeline(".")
+				Else
+					printer.Writeline(sf.AddSpaces(13-sf.Len(c.getstring("DESCRIPCION"))))
+				End If
+				printer.Write(c.GetInt("CANTIDAD"))
+				printer.Write(" x ")
+				printer.Write(c.GetInt("PRECIO"))
+				tot_lin=c.GetInt("CANTIDAD") * c.GetInt("PRECIO")
+				printer.Write(" = ")
+				printer.WriteLine(tot_lin)
+				printer.WriteLine("")
+				tot_fac=tot_fac+tot_lin
+			Next
+			If c.RowCount<=2 Then
+				For i= 1 To 3 - c.RowCount
+					printer.WriteLine("--")
+				Next
+			End If
+			printer.WriteLine("-----------------------------")
+			printer.WriteLine("Total Factura : $" &  NumberFormat2(tot_fac,0, 0, 0, True))
+			printer.WriteLine("-----------------------------")
+			printer.WriteLine("")
+			printer.WriteLine("*** Gracias Por Su Compra ***")
+			printer.WriteLine("")
+			printer.WriteLine("")
+			printer.WriteLine("")
+			printer.WriteLine("")
+			printer.WriteLine(".")
+		End If
+		printer.Flush
+		Msgbox("Printed!",tit)
+		printer.Close
+		cmp20.Disconnect
+	Else
+		If Msgbox2("", "Printer Error","Reprint","Cancel","",Null) = DialogResponse.POSITIVE Then
+			StartPrinter
+		End If
+	End If
+End Sub
+
+Sub btn_compra_Click
+	c=s.ExecQuery("select * from FACTURAS where id_tipo=1 and fecha='" & fecha & "'")
+	If c.RowCount=0 Then
+		s.ExecNonQuery2("insert into facturas (rowid,ID_TIPO,FECHA,ID_TERCERO,ID_MESERO,VR_PAGADO) values (null,1,?,?,?,?)", Array As Object (fecha,rut,0,-1))
+		c=s.ExecQuery("select * from FACTURAS where id_tipo=1 and fecha='" & fecha & "'")
+'		Msgbox("Compra Creada " & fecha,"Informacion" )
+	End If
+	c.Position=0
+	compra=c.GetInt("ID_FACTURA")
+	Msgbox("Compra Creada : " & c.GetInt("VR_PAGADO"),"Informacion" )
+	lbl_carta.Text="Cliente"
+	actualiza_balance
+End Sub
+
+Sub actualiza_compra
+'	btn_del_compra.SetBackgroundImage(LoadBitmap(File.DirAssets,"buscar2.png"))
+'	btn_del_compra.Tag="Buscar"
+	c=s.ExecQuery("select L.ID_FACTURA,L.ID_PLATO,P.DESCRIPCION,L.CANTIDAD,L.COSTO,L.ID_FACTURA_LIN from facturas f left join facturas_lin l on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato where f.id_tipo=1 and f.fecha='" & fecha & "'order by l.ID_FACTURA_LIN asc")
+	lv_compra.Clear
+'	lv_ter.FastScrollEnabled = True
+	lv_compra.color=Colors.RGB(52,35,98)
+	lv_compra.FastScrollEnabled=True
+	lv_compra.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_compra.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_compra.Height=GetDeviceLayoutValues.Height * 0.75
+		lv_compra.SingleLineLayout.ItemHeight = 180
+	Else
+		lv_compra.SingleLineLayout.ItemHeight = 100 ' galaxy s3
+		lv_compra.Height=GetDeviceLayoutValues.Height * 0.7
+		lv_compra.SingleLineLayout.ItemHeight = 100
+	End If
+	If c.RowCount>0 Then
+		tot_fac=0
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			compras(j).ID_FACTURA		=c.GetInt("ID_FACTURA")
+			compras(j).ID_PLATO			=c.GetInt("ID_PLATO")
+			compras(j).CANTIDAD			=c.GetInt("CANTIDAD")
+			compras(j).COSTO			=c.GetInt("COSTO")
+			compras(j).ID_FACTURA_LIN	=c.GetInt("ID_FACTURA_LIN")
+			lv_compra.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(j/2) Then
+				lv_compra.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			lv_compra.AddSingleLine2(c.GetString("DESCRIPCION") & CRLF & c.GetInt("CANTIDAD") & " x " & c.GetInt("COSTO") & " = " & (c.GetInt("CANTIDAD") * c.GetInt("COSTO")) ,c.GetString("DESCRIPCION"))
+			tot_fac=tot_fac + (c.GetInt("CANTIDAD") * c.GetInt("COSTO"))
+		Next
+	End If 
+'''	btn_delete.Visible=False
+	btn_compra.Tag="Agregar"
+	txt_des_pro.Text=""
+	txt_can_pro.Text=""
+End Sub
+
+Sub lv_compra_ItemLongClick (Position As Int, Value As Object)
+	txt_des_pro.Text=Value
+	txt_can_pro.Text=compras(Position).CANTIDAD
+	j=Position
+End Sub
+
+Sub btn_del_compra_Click
+	Dim Id As InputDialog
+	Dim ret As Int 
+    Id.Hint = txt_descripcion.Text 
+    Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+    ret = Id.Show(compras(j).ID_PLATO, tit, "Borrar", "Cancelar", "",Null)
+    ' Primer botón -1
+    If ret = -1 Then 
+		s.ExecNonQuery("delete from facturas_lin where id_factura=" & compra & " and id_plato=" & compras(j).ID_PLATO & " and cantidad=" & txt_can_pro.Text)
+		actualiza_compra
+		actualiza_balance
+    End If
+End Sub
+
+Sub lv_compra_ItemClick (Position As Int, Value As Object)
+	ToastMessageShow(NumberFormat2(tot_fac,0, 0, 0, True),True)	
+End Sub
+
+Sub spn_ter_cxc_ItemClick (Position As Int, Value As Object)
+	txt_valor_mov.Text= sf.Mid(Value,sf.At(Value,"-")+2,sf.Len(Value)-sf.At(Value,"-")-1)
+	txt_detalle_mov.Text="Pago Factura:" & Value
+End Sub
+
+Sub btn_debito_CheckedChange(Checked As Boolean)
+	txt_valor_mov.Text=""
+End Sub
+
+Sub btn_credito_CheckedChange(Checked As Boolean)
+	spn_ter_cxc.Visible=False
+	spn_ter_cxc.Clear
+	txt_valor_mov.Text=""
+	txt_detalle_mov.Text=""
+End Sub
+
+Sub spn_ter_mov_ItemClick (Position As Int, Value As Object)
+	spn_ter_cxc.Clear
+	If btn_credito.Checked=True Then
+		spn_ter_cxc.Visible=False
+	Else
+		c=s.ExecQuery("select *,VR_TOTAL-VR_PAGADO AS SALDO from FACTURAS where vr_pagado<>vr_total and id_tercero=" & sf.Left(spn_ter_mov.SelectedItem,sf.At(spn_ter_mov.SelectedItem,"-")))
+		If c.RowCount>0 Then
+			For j= 0 To c.RowCount - 1 
+				c.Position=j
+				spn_ter_cxc.Add(c.GetInt("ID_FACTURA") & "-" & c.GetInt("SALDO"))
+			Next
+			spn_ter_cxc.Visible=True
+			spn_ter_cxc_ItemClick(0,0)
+		Else
+			spn_ter_cxc.Visible=False
+		End If
+		c.Close
+	End If
+End Sub
+
+Sub lv_balance_det_ItemClick (Position As Int, Value As Object)
+	lv_balance_det.Visible=False
+End Sub
+
+Sub TabHost1_TabChanged
+	Activity.Title = "Tiquete Pos :" & tit & "  (" & TabHost1.CurrentTab & ")"
+	Activity.OpenMenu
+End Sub
+
+'Sub actualiza_ter_click
+'	Activity.LoadLayout("clientes.bal")
+'End Sub
+
+'Sub actualiza_prod_click
+'	Activity.LoadLayout("productos2.bal")
+'End Sub
+
+Sub codigo
+	Dim p As Phone
+'	Msgbox(p.GetNetworkOperatorName,tit)
+'	Msgbox(p.GetVolume(2),"Llamada") ' llamada
+'	Msgbox(p.GetSimOperator,tit)
+'	Msgbox(p.GetMaxVolume(2),"Max Vol llama") 
+'	Msgbox(p.GetVolume(3),"Multimedia") ' multimedia
+'	Msgbox(p.GetMaxVolume(3),"Max Vol multi") 
+'	Msgbox(p.GetSettings("BLUETOOTH_ON"),tit)
+	If File.Exists(File.DirInternal,"louis.conf")=False Then
+		If p.GetNetworkOperatorName="TIGO 4G" And p.GetSimOperator="732130" And p.GetVolume(2)=0 And p.GetVolume(3)=p.GetMaxVolume(3) Then
+'--		If p.GetVolume(2)=0 AND p.GetVolume(3)=p.GetMaxVolume(3) Then
+			ToastMessageShow("Configurar APP" ,True)
+			If s.IsInitialized = False Then
+				s.Initialize(File.DirInternal,"louis.conf",True)
+			End If
+			s.ExecNonQuery("drop table if exists TERCEROS")
+			s.ExecNonQuery("CREATE TABLE TERCEROS ([NIT] varchar(20),[RAZON] varchar (30),[DIRECCION] varchar(20),[MAIL] varchar(20))")
+		Else
+			ToastMessageShow("Dispositivo NO Compatible" ,True)
+			Activity.Finish
+		End If
+	End If
+End Sub
+
+Sub spn_fecha_ItemClick (Position As Int, Value As Object)
+	c=s.ExecQuery("select f.ID_FACTURA,f.FECHA,t.NOMBRE,t.MAIL,p.DESCRIPCION,l.CANTIDAD,l.PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero where f.fecha='" & sf.Left(Value,10) & "'order by f.ID_FACTURA,l.ID_FACTURA_LIN asc")
+	lv_informes.Clear
+	lv_informes.color=Colors.RGB(52,35,98)
+	lv_informes.FastScrollEnabled=True
+	lv_informes.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_informes.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_informes.Height=GetDeviceLayoutValues.Height * 0.75
+		lv_informes.SingleLineLayout.ItemHeight = 180
+	Else
+		lv_informes.SingleLineLayout.ItemHeight = 100 ' galaxy s3
+		lv_informes.Height=GetDeviceLayoutValues.Height * 0.7
+		lv_informes.SingleLineLayout.ItemHeight = 100
+	End If
+	If c.RowCount>0 Then
+		Dim xfac,tdia As Int 
+		xfac=-1
+		tdia=0
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			If xfac<>c.GetInt("ID_FACTURA") Then
+				lv_informes.color=Colors.RGB(52,35,98)
+				lv_informes.AddSingleLine(c.GetInt("ID_FACTURA"))
+				xfac=c.GetInt("ID_FACTURA")
+				tot_fac=0
+			End If
+			lv_compra.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(j/2) Then
+				lv_informes.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			tot_fac=tot_fac + (c.GetInt("CANTIDAD") * c.GetInt("PRECIO"))
+			tdia=tdia+(c.GetInt("CANTIDAD") * c.GetInt("PRECIO"))
+			lv_informes.AddSingleLine2(c.GetString("DESCRIPCION") & CRLF & c.GetInt("CANTIDAD") & " x " & c.GetInt("PRECIO") & " = " & (c.GetInt("CANTIDAD") * c.GetInt("PRECIO"))& " =----> Tot:" & tot_fac ,c.GetString("DESCRIPCION"))
+		Next
+		lv_informes.AddSingleLine("Total Dia ====>>" & NumberFormat2(tdia,0, 0, 0, True))
+	End If 
+End Sub
+
+Sub lv_informes_ItemClick (Position As Int, Value As Object)
+'	ToastMessageShow(Value,True)
+'	ToastMessageShow(sf.InString(Value,"-"),True)
+	If sf.InString(Value,"-")>0 Then
+		c=s.ExecQuery("select f.id_factura,sum(l.CANTIDAD * l.PRECIO) as PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero where fecha='" & Value & "' group by f.id_factura order by f.id_factura")
+	Else
+		If sf.Val(Value)>0 Then
+			c=s.ExecQuery("select f.id_factura,p.DESCRIPCION,l.CANTIDAD,l.PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero where f.id_factura=" & Value )
+		End If
+	End If
+	lv_informes.Clear
+	lv_informes.color=Colors.RGB(52,35,98)
+	If c.RowCount>0 Then
+		tot_fac=0
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			If sf.InString(Value,"-")>0 Then
+				lv_informes.AddSingleLine2(c.GetInt("ID_FACTURA") & "   " & c.GetInt("PRECIO") ,c.GetString("ID_FACTURA"))
+				tot_fac=tot_fac + c.GetInt("PRECIO")
+			Else
+				lv_informes.AddSingleLine(c.GetString("DESCRIPCION") & "   " & c.GetInt("CANTIDAD") & " x " & c.GetInt("PRECIO"))
+				tot_fac=tot_fac + (c.GetInt("CANTIDAD")*c.GetInt("PRECIO"))
+			End If
+		Next
+		If sf.InString(Value,"-")>0 Then
+			lv_informes.AddSingleLine("Total Dia ====>>" & NumberFormat2(tot_fac,0, 0, 0, True))
+		Else
+			lv_informes.AddSingleLine("Total Factura ====>>" & NumberFormat2(tot_fac,0, 0, 0, True))
+		End If
+	End If
+End Sub
+
+Sub lv_informes_ItemLongClick (Position As Int, Value As Object)
+	
+End Sub
+
+Sub spn_prod_ItemClick (Position As Int, Value As Object)
+	If Value="Año" Then
+		c=s.ExecQuery("select substr(fecha,7,4) as ANO,p.DESCRIPCION,sum(l.CANTIDAD) As CANTIDAD,sum(l.CANTIDAD * l.PRECIO) As PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero group by substr(fecha,7,4) ,p.DESCRIPCION order by ANO desc ,cantidad desc")
+		ToastMessageShow("Año",True)
+	Else
+		If Value="Mes" Then
+			c=s.ExecQuery("select substr(fecha,7,4) as ANO,substr(fecha,1,2) as MES,p.DESCRIPCION,sum(l.CANTIDAD) as CANTIDAD,sum(l.CANTIDAD * l.PRECIO) as PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero group by substr(fecha,7,4), substr(fecha,1,2) ,p.DESCRIPCION order by ANO desc ,MES desc ,cantidad desc")
+			ToastMessageShow("Mes",True)
+		Else
+			c=s.ExecQuery("select substr(fecha,7,4) as ANO,substr(fecha,1,2) as MES,substr(fecha,4,2) as DIA,FECHA,sum(l.CANTIDAD * l.PRECIO) As PRECIO from facturas_lin l join facturas f on l.id_factura=f.id_factura left join platos p on p.id_plato=l.id_plato left join terceros t on t.id_tercero=f.id_tercero group by substr(fecha,7,4), substr(fecha,1,2), substr(fecha,4,2),FECHA order by ANO desc ,MES desc ,DIA desc")
+			ToastMessageShow("Dia",True)
+		End If
+	End If
+	lv_informes.Clear
+	lv_informes.color=Colors.RGB(52,35,98)
+	lv_informes.FastScrollEnabled=True
+	lv_informes.Width=GetDeviceLayoutValues.Width * 0.99
+	If tam>=4 Then
+		lv_informes.SingleLineLayout.ItemHeight = 250 ' galaxy s5
+		lv_informes.Height=GetDeviceLayoutValues.Height * 0.75
+		lv_informes.SingleLineLayout.ItemHeight = 180
+	Else
+		lv_informes.SingleLineLayout.ItemHeight = 100 ' galaxy s3
+		lv_informes.Height=GetDeviceLayoutValues.Height * 0.7
+		lv_informes.SingleLineLayout.ItemHeight = 100
+	End If
+	If c.RowCount>0 Then
+		Dim xfac,tdia As Int 
+		xfac=-1
+		tdia=0
+		tot_fac=0
+		For j= 0 To c.RowCount - 1 
+			c.Position=j
+			If Value="Año" Then
+				If xfac<>c.GetInt("ANO") Then
+					lv_informes.color=Colors.RGB(52,35,98)
+					lv_informes.AddSingleLine(c.GetInt("ANO"))
+					xfac=c.GetInt("ANO")
+					tot_fac=0
+				End If
+			Else
+				If Value="Mes" Then
+					If xfac<>c.GetInt("MES") Then
+						Dim label100 As Label 
+						label100=lv_informes.SingleLineLayout.Label 
+						label100.TextSize=20
+						lv_informes.color=Colors.RGB(52,35,98)
+						lv_informes.AddSingleLine(c.GetInt("ANO") & "-" & c.GetInt("MES"))
+						xfac=c.GetInt("MES")
+						tot_fac=0
+					End If
+				End If
+			End If
+			lv_compra.SingleLineLayout.Label.TextSize=tam_texto
+			If j/2 = Floor(j/2) Then
+				lv_informes.SingleLineLayout.Label.TextColor=Colors.Yellow 
+			End If
+			tot_fac=tot_fac + c.GetInt("PRECIO")
+			tdia=tdia + c.GetInt("PRECIO")
+			If Value="Año" Or Value="Mes" Then
+				lv_informes.AddSingleLine2(c.GetString("DESCRIPCION") & CRLF & c.GetInt("CANTIDAD") & "   " & c.GetInt("PRECIO") ,c.GetString("DESCRIPCION"))
+			Else
+				lv_informes.AddSingleLine2(c.GetString("FECHA") & "  " &  NumberFormat2( c.GetInt("PRECIO"),0, 0, 0, True) ,c.GetString("FECHA"))
+			End If
+		Next
+		lv_informes.AddSingleLine("Total Dia ====>>" & NumberFormat2(tdia,0, 0, 0, True))
+	End If
+End Sub
+
+Sub InputBox(Prompt As String, Title As String, Default As String, Hint As String) As String
+	Dim Id As InputDialog
+	Dim ret As String
+	Id.HintColor = Colors.ARGB(196, 255, 140, 0)
+	Id.Hint = Hint ' Valor escrito en el casillero
+	Id.Input = Default ' Valor por defecto en el casillero
+'	Id.Input=Id.INPUT_TYPE_DECIMAL_NUMBERS
+	' Cambiar, Borrar, Cancelar son los botones, si quieres quitar alguno: ""
+	ret = Id.Show(Prompt, Title, "Aceptar", "", "Cancelar", Null)
+	If ret = -1 Then Return Id.Input ' El valor del casillero es la salida
+	If ret = -3 Then Return ""
+	If ret = -2 Then Return ""
+End Sub
